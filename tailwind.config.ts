@@ -9,37 +9,44 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // DOKit Brand Colors
+        // DOKit Brand Colors - Indigo/Violet theme
         primary: {
-          DEFAULT: '#0a0f1a',  // Dark blue/black
-          dark: '#060912',
-          light: '#1a2332',
+          DEFAULT: '#6366f1',
+          50: '#eef2ff',
+          100: '#e0e7ff',
+          200: '#c7d2fe',
+          300: '#a5b4fc',
+          400: '#818cf8',
+          500: '#6366f1',
+          600: '#4f46e5',
+          700: '#4338ca',
+          800: '#3730a3',
+          900: '#312e81',
         },
-        accent: {
-          DEFAULT: '#00d4ff',  // Bright cyan
-          light: '#4de4ff',
-          dark: '#00b8e6',
+        violet: {
+          DEFAULT: '#8b5cf6',
+          50: '#f5f3ff',
+          100: '#ede9fe',
+          200: '#ddd6fe',
+          300: '#c4b5fd',
+          400: '#a78bfa',
+          500: '#8b5cf6',
+          600: '#7c3aed',
+          700: '#6d28d9',
+          800: '#5b21b6',
+          900: '#4c1d95',
         },
-        secondary: {
-          DEFAULT: '#00ffcc',  // Turquoise/mint
-          light: '#4dffe0',
-          dark: '#00d9ad',
-        },
-        slate: {
-          DEFAULT: '#2a3443',
-          light: '#3d4a5c',
-        },
-        cream: '#f8fafc',      // Light background
-        'warm-white': '#ffffff',
       },
       fontFamily: {
-        sans: ['Outfit', 'system-ui', 'sans-serif'],
-        serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       boxShadow: {
         'soft-sm': '0 2px 8px rgba(0,0,0,0.04)',
         'soft-md': '0 4px 24px rgba(0,0,0,0.06)',
         'soft-lg': '0 12px 48px rgba(0,0,0,0.08)',
+      },
+      borderWidth: {
+        '3': '3px',
       },
     },
   },

@@ -209,10 +209,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                           : 'text-slate-600 hover:bg-slate-50'
                       }`}
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                      <svg width="20" height="20" className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                         <path d={item.icon} />
                       </svg>
-                      {item.name}
+                      <span>{item.name}</span>
                     </Link>
                   );
                 })}

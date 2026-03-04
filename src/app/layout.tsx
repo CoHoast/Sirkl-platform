@@ -5,24 +5,12 @@ import { Providers } from "./providers";
 export const metadata: Metadata = {
   title: "DOKit Admin Dashboard",
   description: "AI-powered healthcare document processing platform",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "DOKit Admin",
-  },
-  formatDetection: {
-    telephone: false,
-  },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0f1a",
+  themeColor: "#6366f1",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -33,13 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="apple-touch-icon" href="/icon.svg" />
-        <link rel="icon" type="image/svg+xml" href="/icon.svg" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="antialiased">
+      <body className="antialiased bg-slate-50" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
         <Providers>
           {children}
         </Providers>

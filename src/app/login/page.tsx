@@ -62,7 +62,7 @@ export default function LoginPage() {
           <div style={{
             width: '64px',
             height: '64px',
-            background: 'linear-gradient(135deg, #2563eb, #06b6d4)',
+            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
             borderRadius: '16px',
             display: 'flex',
             alignItems: 'center',
@@ -160,7 +160,7 @@ export default function LoginPage() {
             style={{
               width: '100%',
               padding: '14px',
-              background: loading ? '#9ca3af' : 'linear-gradient(135deg, #2563eb, #06b6d4)',
+              background: loading ? '#9ca3af' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
               color: 'white',
               border: 'none',
               borderRadius: '8px',

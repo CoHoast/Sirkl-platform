@@ -106,7 +106,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             width: 40, 
             height: 40, 
             border: '3px solid #e5e7eb', 
-            borderTopColor: '#0a0f1a', 
+            borderTopColor: '#0f172a', 
             borderRadius: '50%', 
             animation: 'spin 0.8s linear infinite',
             margin: '0 auto 16px'
@@ -127,13 +127,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Mobile Header */}
       <div className="mobile-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg, #2563eb, #06b6d4)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: 'white', fontWeight: 'bold', fontSize: '16px' }}>D</span>
+          <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: '#0f172a', fontWeight: 'bold', fontSize: '16px' }}>D</span>
           </div>
-          <span style={{ fontSize: '18px', fontWeight: 700, color: '#0a0f1a' }}>DOKit</span>
+          <span style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a' }}>DOKit</span>
         </div>
         <button className="mobile-menu-btn" onClick={() => setSidebarOpen(true)}>
-          <svg width="24" height="24" fill="none" stroke="#0a0f1a" strokeWidth="2" viewBox="0 0 24 24">
+          <svg width="24" height="24" fill="none" stroke="#0f172a" strokeWidth="2" viewBox="0 0 24 24">
             <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
           </svg>
         </button>
@@ -147,17 +147,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="sidebar-logo">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '40px', height: '40px', background: 'linear-gradient(135deg, #2563eb, #06b6d4)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ color: 'white', fontWeight: 'bold', fontSize: '20px' }}>D</span>
+              <div style={{ width: '40px', height: '40px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ color: '#0f172a', fontWeight: 'bold', fontSize: '20px' }}>D</span>
               </div>
-              <span style={{ fontSize: '20px', fontWeight: 700, color: 'white' }}>DOKit</span>
+              <span style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a' }}>DOKit</span>
             </div>
             <button 
               onClick={closeSidebar}
               style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', padding: '8px' }}
               className="mobile-close-btn"
             >
-              <svg width="24" height="24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" viewBox="0 0 24 24">
+              <svg width="24" height="24" fill="none" stroke="#64748b" strokeWidth="2" viewBox="0 0 24 24">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
             </button>
@@ -166,7 +166,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* Client Switcher */}
-        <div style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+        <div style={{ padding: '16px', borderBottom: '1px solid #e2e8f0' }}>
           <div 
             onClick={() => setShowClientDropdown(!showClientDropdown)}
             style={{
@@ -174,10 +174,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '12px 16px',
-              background: selectedClient ? 'rgba(0, 212, 255, 0.15)' : 'rgba(255,255,255,0.05)',
+              background: selectedClient ? 'rgba(0, 212, 255, 0.15)' : '#f8fafc',
               borderRadius: '8px',
               cursor: 'pointer',
-              border: selectedClient ? '1px solid #00d4ff' : '1px solid rgba(255,255,255,0.1)',
+              border: selectedClient ? '1px solid #6366f1' : '1px solid #e2e8f0',
               transition: 'all 0.2s',
             }}
           >
@@ -186,20 +186,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 width: 32,
                 height: 32,
                 borderRadius: '6px',
-                background: selectedClient ? '#00d4ff' : 'rgba(255,255,255,0.1)',
+                background: selectedClient ? '#6366f1' : '#e2e8f0',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-                <svg width="16" height="16" fill="none" stroke={selectedClient ? '#0a0f1a' : 'rgba(255,255,255,0.7)'} strokeWidth="2" viewBox="0 0 24 24">
+                <svg width="16" height="16" fill="none" stroke={selectedClient ? '#0f172a' : '#475569'} strokeWidth="2" viewBox="0 0 24 24">
                   <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
               <div>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: 'white' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>
                   {selectedClient ? selectedClient.name : 'All Clients'}
                 </div>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>
+                <div style={{ fontSize: '11px', color: '#64748b' }}>
                   {selectedClient ? 'Client View' : 'Platform View'}
                 </div>
               </div>
@@ -208,7 +208,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               width="16" 
               height="16" 
               fill="none" 
-              stroke="rgba(255,255,255,0.6)" 
+              stroke="#64748b" 
               strokeWidth="2" 
               viewBox="0 0 24 24"
               style={{ 
@@ -253,7 +253,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   width: 28,
                   height: 28,
                   borderRadius: '6px',
-                  background: !selectedClient ? '#00d4ff' : '#e5e7eb',
+                  background: !selectedClient ? '#6366f1' : '#e5e7eb',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -267,7 +267,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <div style={{ fontSize: '11px', color: '#6b7280' }}>Platform overview</div>
                 </div>
                 {!selectedClient && (
-                  <svg width="16" height="16" fill="none" stroke="#00d4ff" strokeWidth="2" viewBox="0 0 24 24" style={{ marginLeft: 'auto' }}>
+                  <svg width="16" height="16" fill="none" stroke="#6366f1" strokeWidth="2" viewBox="0 0 24 24" style={{ marginLeft: 'auto' }}>
                     <path d="M5 13l4 4L19 7" />
                   </svg>
                 )}
@@ -298,7 +298,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       width: 28,
                       height: 28,
                       borderRadius: '6px',
-                      background: selectedClient?.id === client.id ? '#00d4ff' : '#f3f4f6',
+                      background: selectedClient?.id === client.id ? '#6366f1' : '#f3f4f6',
                       color: selectedClient?.id === client.id ? 'white' : '#6b7280',
                       display: 'flex',
                       alignItems: 'center',
@@ -329,7 +329,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       </span>
                     )}
                     {selectedClient?.id === client.id && (
-                      <svg width="16" height="16" fill="none" stroke="#00d4ff" strokeWidth="2" viewBox="0 0 24 24">
+                      <svg width="16" height="16" fill="none" stroke="#6366f1" strokeWidth="2" viewBox="0 0 24 24">
                         <path d="M5 13l4 4L19 7" />
                       </svg>
                     )}
@@ -392,7 +392,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               width="16" 
               height="16" 
               fill="none" 
-              stroke="rgba(255,255,255,0.6)" 
+              stroke="#64748b" 
               strokeWidth="2" 
               viewBox="0 0 24 24"
               style={{ 
@@ -451,7 +451,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     width: 32,
                     height: 32,
                     borderRadius: '50%',
-                    background: user?.email === demoUser.email ? '#0a0f1a' : '#e5e7eb',
+                    background: user?.email === demoUser.email ? '#0f172a' : '#e5e7eb',
                     color: user?.email === demoUser.email ? 'white' : '#6b7280',
                     display: 'flex',
                     alignItems: 'center',
@@ -474,7 +474,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       width="16" 
                       height="16" 
                       fill="none" 
-                      stroke="#0a0f1a" 
+                      stroke="#0f172a" 
                       strokeWidth="2" 
                       viewBox="0 0 24 24"
                       style={{ marginLeft: 'auto' }}
@@ -487,7 +487,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           )}
           
-          <Link href="/" onClick={closeSidebar} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', marginTop: '8px', color: 'rgba(255,255,255,0.6)', textDecoration: 'none', fontSize: '14px' }}>
+          <Link href="/" onClick={closeSidebar} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', marginTop: '8px', color: '#64748b', textDecoration: 'none', fontSize: '14px' }}>
             <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
             </svg>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Medical Records Summary - Margaret Thompson</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; font-size: 14px; line-height: 1.6; }
+    .header { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #275380; }
+    .hospital-logo { font-size: 20px; font-weight: bold; color: #1a365d; }
+    .hospital-info { font-size: 11px; color: #666; }
+    .form-title { font-size: 18px; color: #333; margin-top: 10px; }
+    .confidential { background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-block; margin-top: 5px; }
+    .section { margin-bottom: 25px; }
+    .section-title { font-size: 14px; font-weight: bold; color: #275380; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid #ddd; text-transform: uppercase; }
+    .field-row { display: flex; margin-bottom: 8px; }
+    .field { flex: 1; margin-right: 20px; }
+    .field:last-child { margin-right: 0; }
+    .field-label { font-size: 11px; color: #666; margin-bottom: 2px; }
+    .field-value { padding: 8px; background: #f5f5f5; border-radius: 4px; min-height: 20px; }
+    .vitals-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .vital-box { background: #f5f5f5; padding: 12px; border-radius: 8px; text-align: center; }
+    .vital-value { font-size: 20px; font-weight: bold; color: #275380; }
+    .vital-label { font-size: 11px; color: #666; }
+    .vital-normal { color: #16a34a; }
+    .vital-warning { color: #ca8a04; }
+    .med-list { list-style: none; }
+    .med-list li { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+    .med-name { font-weight: 500; }
+    .med-details { color: #666; font-size: 13px; }
+    .history-item { padding: 12px; border-left: 3px solid #275380; background: #f9f9f9; margin-bottom: 10px; }
+    .history-date { font-size: 12px; color: #666; }
+    .history-event { font-weight: 500; }
+    .assessment { background: #f0f9ff; border: 1px solid #0ea5e9; padding: 15px; border-radius: 8px; }
+    .footer { margin-top: 40px; font-size: 11px; color: #888; text-align: center; }
+    @media print { body { padding: 20px; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="hospital-logo">BEAUMONT HEALTH</div>
+    <div class="hospital-info">Royal Oak Campus | 3601 W Thirteen Mile Rd, Royal Oak, MI 48073 | (248) 898-5000</div>
+    <div class="form-title">Patient Medical Records Summary</div>
+    <div class="confidential">CONFIDENTIAL - HIPAA PROTECTED</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Patient Demographics</div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Patient Name</div>
+        <div class="field-value">Margaret Elizabeth Thompson</div>
+      </div>
+      <div class="field">
+        <div class="field-label">MRN</div>
+        <div class="field-value">BH-2019-445521</div>
+      </div>
+      <div class="field">
+        <div class="field-label">DOB</div>
+        <div class="field-value">03/15/1942 (Age 83)</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Admission Date</div>
+        <div class="field-value">February 20, 2026</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Attending Physician</div>
+        <div class="field-value">Dr. Robert Chen, MD</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Unit</div>
+        <div class="field-value">4 North - Medical/Surgical</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Current Vital Signs (as of 02/24/2026 08:00)</div>
+    <div class="vitals-grid">
+      <div class="vital-box">
+        <div class="vital-value vital-normal">118/72</div>
+        <div class="vital-label">Blood Pressure</div>
+      </div>
+      <div class="vital-box">
+        <div class="vital-value vital-normal">72</div>
+        <div class="vital-label">Heart Rate (bpm)</div>
+      </div>
+      <div class="vital-box">
+        <div class="vital-value vital-normal">98.4°F</div>
+        <div class="vital-label">Temperature</div>
+      </div>
+      <div class="vital-box">
+        <div class="vital-value vital-normal">97%</div>
+        <div class="vital-label">O2 Saturation</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Diagnoses</div>
+    <div class="field-value">
+      <strong>Primary:</strong> Urinary Tract Infection (ICD-10: N39.0)<br>
+      <strong>Secondary:</strong><br>
+      • Dementia, Alzheimer's type, moderate (ICD-10: G30.1)<br>
+      • Essential Hypertension (ICD-10: I10)<br>
+      • Type 2 Diabetes Mellitus without complications (ICD-10: E11.9)<br>
+      • History of falls (ICD-10: Z91.81)
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Current Medications</div>
+    <ul class="med-list">
+      <li>
+        <div><span class="med-name">Metformin 500mg</span><br><span class="med-details">Oral, twice daily with meals</span></div>
+        <div class="med-details">Diabetes</div>
+      </li>
+      <li>
+        <div><span class="med-name">Lisinopril 10mg</span><br><span class="med-details">Oral, once daily in morning</span></div>
+        <div class="med-details">Hypertension</div>
+      </li>
+      <li>
+        <div><span class="med-name">Donepezil 5mg</span><br><span class="med-details">Oral, once daily at bedtime</span></div>
+        <div class="med-details">Dementia</div>
+      </li>
+      <li>
+        <div><span class="med-name">Ciprofloxacin 500mg</span><br><span class="med-details">Oral, twice daily x 7 days (Day 4 of 7)</span></div>
+        <div class="med-details">UTI (Acute)</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Known Allergies</div>
+    <div class="field-value" style="background: #fef2f2; border: 1px solid #fecaca;">
+      <strong style="color: #dc2626;">⚠️ ALLERGIES:</strong><br>
+      • Penicillin - Reaction: Rash, hives<br>
+      • Sulfa drugs - Reaction: Hives, difficulty breathing
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Hospital Course Summary</div>
+    <div class="history-item">
+      <div class="history-date">02/20/2026 - Admission</div>
+      <div class="history-event">Admitted via ED with confusion, fever (101.2°F), and dysuria. UA positive for bacteria. Started on IV antibiotics.</div>
+    </div>
+    <div class="history-item">
+      <div class="history-date">02/21/2026</div>
+      <div class="history-event">Fever resolved. Transitioned to oral antibiotics. Confusion improving with treatment of infection.</div>
+    </div>
+    <div class="history-item">
+      <div class="history-date">02/23/2026</div>
+      <div class="history-event">Medically stable. Family meeting held to discuss discharge planning. Memory care placement recommended due to baseline dementia and safety concerns at home.</div>
+    </div>
+    <div class="history-item">
+      <div class="history-date">02/24/2026 - Current</div>
+      <div class="history-event">Cleared for discharge to SNF/Memory Care. Awaiting placement at Cranberry Park at West Bloomfield.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Cognitive Assessment</div>
+    <div class="assessment">
+      <strong>MMSE Score:</strong> 18/30 (Moderate Cognitive Impairment)<br>
+      <strong>Assessment Date:</strong> February 23, 2026<br><br>
+      <strong>Findings:</strong> Patient demonstrates deficits in short-term memory, orientation to time, and executive function. Able to follow simple commands. Requires supervision for ADLs and medication management. Appropriate for memory care level of service.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Functional Status</div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-value">
+          <strong>Mobility:</strong> Ambulatory with supervision, uses walker<br>
+          <strong>Bathing:</strong> Requires assistance<br>
+          <strong>Dressing:</strong> Requires assistance<br>
+          <strong>Eating:</strong> Independent with setup
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-value">
+          <strong>Toileting:</strong> Requires reminders/supervision<br>
+          <strong>Transferring:</strong> Minimal assistance<br>
+          <strong>Continence:</strong> Occasional incontinence<br>
+          <strong>Medications:</strong> Cannot self-administer
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Beaumont Health System | Medical Records Department | (248) 898-5000</p>
+    <p>Prepared by: Dr. Robert Chen, MD | Date: February 24, 2026</p>
+    <p>This document contains protected health information. Unauthorized disclosure is prohibited by law.</p>
+  </div>
+</body>
+</html>

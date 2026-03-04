@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Original Document - Scanned Intake Form</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Courier New', monospace; 
+      background: #e8e8e8; 
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .scan-container {
+      max-width: 850px;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      position: relative;
+      transform: rotate(-0.3deg);
+    }
+    .scan-page {
+      padding: 60px;
+      background: white;
+      background-image: 
+        linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px);
+      background-size: 100% 24px;
+      position: relative;
+    }
+    /* Scanned document effects */
+    .scan-page::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, rgba(0,0,0,0.03) 0%, transparent 3%, transparent 97%, rgba(0,0,0,0.03) 100%);
+      pointer-events: none;
+    }
+    .scan-page::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .header-box {
+      border: 2px solid #333;
+      padding: 15px 20px;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .hospital-name {
+      font-size: 18px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .form-title {
+      font-size: 14px;
+      text-align: center;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .handwritten {
+      font-family: 'Comic Sans MS', 'Segoe Script', cursive;
+      color: #1a237e;
+      font-size: 14px;
+    }
+    .field-row {
+      display: flex;
+      margin-bottom: 12px;
+      align-items: flex-end;
+    }
+    .field-label {
+      font-size: 11px;
+      min-width: 140px;
+      padding-right: 10px;
+    }
+    .field-line {
+      flex: 1;
+      border-bottom: 1px solid #333;
+      min-height: 22px;
+      padding: 0 5px;
+    }
+    .section-header {
+      font-size: 12px;
+      font-weight: bold;
+      background: #f0f0f0;
+      padding: 8px 12px;
+      margin: 20px 0 15px 0;
+      border: 1px solid #ccc;
+    }
+    .checkbox-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 10px 0;
+    }
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+    }
+    .checkbox {
+      width: 14px;
+      height: 14px;
+      border: 1px solid #333;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .date-stamp {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: #c00;
+      font-size: 11px;
+      transform: rotate(-12deg);
+      border: 2px solid #c00;
+      padding: 5px 10px;
+    }
+    .fax-header {
+      font-size: 10px;
+      color: #666;
+      text-align: center;
+      margin-bottom: 15px;
+      border-bottom: 1px dashed #ccc;
+      padding-bottom: 10px;
+    }
+    .signature-area {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #ccc;
+    }
+    .sig-line {
+      border-bottom: 1px solid #333;
+      width: 250px;
+      height: 40px;
+      display: inline-block;
+      margin-right: 30px;
+      position: relative;
+    }
+    .sig-line .handwritten {
+      position: absolute;
+      bottom: 5px;
+      left: 10px;
+      font-size: 16px;
+    }
+    @media print {
+      body { background: white; padding: 0; }
+      .scan-container { box-shadow: none; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="scan-container">
+    <div class="scan-page">
+      <div class="fax-header">
+        *** FAX RECEIVED: 02/24/2026 09:47 AM FROM: BEAUMONT HEALTH (248) 898-5000 PAGE 1 OF 1 ***
+      </div>
+      
+      <div class="date-stamp">
+        RECEIVED<br>
+        FEB 24 2026<br>
+        ADMISSIONS
+      </div>
+
+      <div class="header-box">
+        <div>
+          <div class="hospital-name">BEAUMONT HEALTH</div>
+          <div style="font-size: 10px;">Royal Oak Campus • (248) 898-5000</div>
+        </div>
+        <div style="text-align: right; font-size: 10px;">
+          MRN: BH-2019-445521<br>
+          Date: 02/24/2026
+        </div>
+      </div>
+
+      <div class="form-title">PATIENT REFERRAL / INTAKE FORM</div>
+
+      <div class="section-header">PATIENT INFORMATION</div>
+      
+      <div class="field-row">
+        <span class="field-label">Patient Name:</span>
+        <div class="field-line"><span class="handwritten">Margaret Elizabeth Thompson</span></div>
+      </div>
+      
+      <div class="field-row">
+        <span class="field-label">Date of Birth:</span>
+        <div class="field-line" style="max-width: 150px;"><span class="handwritten">03/15/1942</span></div>
+        <span class="field-label" style="min-width: 50px; text-align: right;">Age:</span>
+        <div class="field-line" style="max-width: 60px;"><span class="handwritten">83</span></div>
+        <span class="field-label" style="min-width: 60px; text-align: right;">Gender:</span>
+        <div class="field-line" style="max-width: 80px;"><span class="handwritten">Female</span></div>
+      </div>
+
+      <div class="field-row">
+        <span class="field-label">Address:</span>
+        <div class="field-line"><span class="handwritten">1234 Oak Street, Bloomfield Hills, MI 48301</span></div>
+      </div>
+
+      <div class="field-row">
+        <span class="field-label">Phone:</span>
+        <div class="field-line" style="max-width: 180px;"><span class="handwritten">(248) 555-0123</span></div>
+        <span class="field-label" style="min-width: 100px; text-align: right;">SSN (last 4):</span>
+        <div class="field-line" style="max-width: 80px;"><span class="handwritten">4521</span></div>
+      </div>
+
+      <div class="section-header">EMERGENCY CONTACT</div>
+      
+      <div class="field-row">
+        <span class="field-label">Name:</span>
+        <div class="field-line"><span class="handwritten">Susan Thompson-Miller (Daughter)</span></div>
+        <span class="field-label" style="min-width: 60px; text-align: right;">Phone:</span>
+        <div class="field-line" style="max-width: 150px;"><span class="handwritten">(248) 555-0456</span></div>
+      </div>
+
+      <div class="section-header">MEDICAL INFORMATION</div>
+
+      <div class="field-row">
+        <span class="field-label">Primary Diagnosis:</span>
+        <div class="field-line"><span class="handwritten">Dementia (Alzheimer's type), HTN, Type 2 DM</span></div>
+      </div>
+
+      <div class="field-row">
+        <span class="field-label">Current Medications:</span>
+        <div class="field-line"><span class="handwritten">Metformin 500mg BID, Lisinopril 10mg daily, Donepezil 5mg QHS</span></div>
+      </div>
+
+      <div class="field-row">
+        <span class="field-label">Allergies:</span>
+        <div class="field-line"><span class="handwritten">Penicillin (rash), Sulfa (hives) ⚠️</span></div>
+      </div>
+
+      <div class="field-row">
+        <span class="field-label">Attending Physician:</span>
+        <div class="field-line"><span class="handwritten">Dr. Robert Chen, MD - (248) 555-7890</span></div>
+      </div>
+
+      <div class="section-header">SERVICES REQUESTED</div>
+      
+      <div class="checkbox-row">
+        <div class="checkbox-item"><span class="checkbox"><span class="handwritten">✓</span></span> Memory Care</div>
+        <div class="checkbox-item"><span class="checkbox"><span class="handwritten">✓</span></span> Medication Mgmt</div>
+        <div class="checkbox-item"><span class="checkbox"><span class="handwritten">✓</span></span> Physical Therapy</div>
+        <div class="checkbox-item"><span class="checkbox"></span> Occupational Therapy</div>
+        <div class="checkbox-item"><span class="checkbox"></span> Speech Therapy</div>
+        <div class="checkbox-item"><span class="checkbox"></span> Skilled Nursing</div>
+        <div class="checkbox-item"><span class="checkbox"></span> Wound Care</div>
+        <div class="checkbox-item"><span class="checkbox"></span> IV Therapy</div>
+      </div>
+
+      <div class="section-header">INSURANCE INFORMATION</div>
+
+      <div class="field-row">
+        <span class="field-label">Primary Insurance:</span>
+        <div class="field-line"><span class="handwritten">Medicare Part A & B</span></div>
+      </div>
+
+      <div class="field-row">
+        <span class="field-label">Policy/Member ID:</span>
+        <div class="field-line" style="max-width: 200px;"><span class="handwritten">1EG4-TE5-MK72</span></div>
+        <span class="field-label" style="min-width: 100px; text-align: right;">Group #:</span>
+        <div class="field-line"><span class="handwritten">N/A</span></div>
+      </div>
+
+      <div class="field-row">
+        <span class="field-label">Secondary Insurance:</span>
+        <div class="field-line"><span class="handwritten">AARP Medigap Plan G - MSG-2019-887412</span></div>
+      </div>
+
+      <div class="section-header">FACILITY PREFERENCE</div>
+
+      <div class="field-row">
+        <span class="field-label">Preferred Facility:</span>
+        <div class="field-line"><span class="handwritten">Cranberry Park at West Bloomfield</span></div>
+      </div>
+
+      <div class="field-row">
+        <span class="field-label">Requested Admit Date:</span>
+        <div class="field-line" style="max-width: 150px;"><span class="handwritten">ASAP - 3/1/26</span></div>
+        <span class="field-label" style="min-width: 80px; text-align: right;">Urgency:</span>
+        <div class="field-line" style="max-width: 100px;"><span class="handwritten">HIGH</span></div>
+      </div>
+
+      <div class="field-row">
+        <span class="field-label">Reason/Notes:</span>
+        <div class="field-line"><span class="handwritten">Pt being d/c from Beaumont. Family unable to care at home. Needs 24hr supervision.</span></div>
+      </div>
+
+      <div class="signature-area">
+        <div class="field-row">
+          <span class="field-label">Referring Provider:</span>
+          <div class="sig-line"><span class="handwritten" style="font-style: italic;">R. Chen MD</span></div>
+          <span class="field-label" style="min-width: 50px;">Date:</span>
+          <div class="field-line" style="max-width: 120px;"><span class="handwritten">2/24/26</span></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; font-size: 9px; color: #666; text-align: center;">
+        CONFIDENTIAL: This fax contains protected health information (PHI) intended only for the recipient. 
+        If received in error, please notify sender immediately and destroy this document.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

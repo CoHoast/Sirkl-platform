@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Original Document - Insurance Email</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .email-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .email-header {
+      background: #f8f9fa;
+      padding: 20px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .email-meta {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 8px;
+      font-size: 14px;
+    }
+    .email-label {
+      color: #666;
+      font-weight: 500;
+    }
+    .email-value {
+      color: #333;
+    }
+    .email-subject {
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 15px;
+      color: #1a1a1a;
+    }
+    .email-body {
+      padding: 25px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #333;
+    }
+    .email-body p {
+      margin-bottom: 15px;
+    }
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 4px;
+    }
+    .attachment-box {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+    }
+    .attachment-title {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .attachment-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: white;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      border: 1px solid #e8e8e8;
+    }
+    .attachment-icon {
+      width: 40px;
+      height: 40px;
+      background: #dc3545;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .attachment-info {
+      flex: 1;
+    }
+    .attachment-name {
+      font-weight: 500;
+      color: #333;
+    }
+    .attachment-size {
+      font-size: 12px;
+      color: #888;
+    }
+    .insurance-card {
+      margin: 20px 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+      border-radius: 12px;
+      color: white;
+      font-family: 'Arial', sans-serif;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .card-logo {
+      font-size: 20px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .card-type {
+      font-size: 11px;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 10px;
+      border-radius: 10px;
+    }
+    .card-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      font-size: 13px;
+    }
+    .card-field label {
+      font-size: 10px;
+      opacity: 0.8;
+      display: block;
+      margin-bottom: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .card-field span {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .signature-line {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      font-size: 13px;
+      color: #666;
+    }
+    .sig-name {
+      font-weight: 600;
+      color: #333;
+    }
+    .sig-title {
+      font-size: 12px;
+    }
+    .disclaimer {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      font-size: 11px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="email-header">
+      <div class="email-meta">
+        <span class="email-label">From:</span>
+        <span class="email-value">Medicare Customer Service &lt;verification@cms.hhs.gov&gt;</span>
+        
+        <span class="email-label">To:</span>
+        <span class="email-value">admissions@optalis.com</span>
+        
+        <span class="email-label">Date:</span>
+        <span class="email-value">February 24, 2026 at 10:52 AM EST</span>
+        
+        <span class="email-label">Ref #:</span>
+        <span class="email-value">CMS-REF-2026-0224-8847</span>
+      </div>
+      <div class="email-subject">RE: Insurance Verification Request - Margaret Thompson (DOB: 03/15/1942)</div>
+    </div>
+
+    <div class="email-body">
+      <p>Dear Optalis Healthcare Admissions Team,</p>
+
+      <p>This email confirms the insurance verification for the patient referenced above. Please find the details of coverage below:</p>
+
+      <div class="insurance-card">
+        <div class="card-header">
+          <div class="card-logo">MEDICARE</div>
+          <div class="card-type">Health Insurance Card</div>
+        </div>
+        <div class="card-details">
+          <div class="card-field">
+            <label>Name</label>
+            <span>MARGARET E THOMPSON</span>
+          </div>
+          <div class="card-field">
+            <label>Medicare Number</label>
+            <span>1EG4-TE5-MK72</span>
+          </div>
+          <div class="card-field">
+            <label>Part A Effective</label>
+            <span>04/01/2007</span>
+          </div>
+          <div class="card-field">
+            <label>Part B Effective</label>
+            <span>04/01/2007</span>
+          </div>
+        </div>
+      </div>
+
+      <p><strong>Verification Summary:</strong></p>
+
+      <p>
+        <strong>Coverage Status:</strong> <span class="highlight">ACTIVE - Eligible for Benefits</span><br>
+        <strong>Part A (Hospital):</strong> Active - No deductible remaining for 2026<br>
+        <strong>Part B (Medical):</strong> Active - $240 deductible MET for 2026<br>
+        <strong>Skilled Nursing Facility:</strong> Eligible - Days 1-100 available (0 used in benefit period)
+      </p>
+
+      <p>
+        <strong>SNF Benefit Details:</strong><br>
+        • Days 1-20: $0 coinsurance (fully covered)<br>
+        • Days 21-100: $204.00/day coinsurance (2026 rate)<br>
+        • Patient has secondary Medigap Plan G that covers day 21-100 coinsurance
+      </p>
+
+      <p>
+        <strong>Qualifying Hospital Stay:</strong> <span class="highlight">VERIFIED</span><br>
+        Beaumont Health - Royal Oak | Admission: 02/20/2026 | 3+ day requirement: MET
+      </p>
+
+      <p>
+        <strong>Prior Authorization:</strong> NOT REQUIRED for SNF admission
+      </p>
+
+      <div class="attachment-box">
+        <div class="attachment-title">Attachments (2)</div>
+        <div class="attachment-item">
+          <div class="attachment-icon">PDF</div>
+          <div class="attachment-info">
+            <div class="attachment-name">Medicare_Card_Thompson.pdf</div>
+            <div class="attachment-size">156 KB</div>
+          </div>
+        </div>
+        <div class="attachment-item">
+          <div class="attachment-icon">PDF</div>
+          <div class="attachment-info">
+            <div class="attachment-name">Eligibility_Letter_2026.pdf</div>
+            <div class="attachment-size">89 KB</div>
+          </div>
+        </div>
+      </div>
+
+      <p>This verification is valid for <strong>30 days</strong> from the date of this email. Please retain this email for your records.</p>
+
+      <p>If you have any questions, please contact Medicare at 1-800-MEDICARE (1-800-633-4227), TTY: 1-877-486-2048, available 24/7.</p>
+
+      <div class="signature-line">
+        <div class="sig-name">Medicare Beneficiary Services</div>
+        <div class="sig-title">Centers for Medicare & Medicaid Services (CMS)</div>
+        <div style="margin-top: 5px;">Reference: CMS-REF-2026-0224-8847</div>
+      </div>
+
+      <div class="disclaimer">
+        <strong>CONFIDENTIALITY NOTICE:</strong> This email and any attachments contain confidential information intended only for the addressee. If you are not the intended recipient, you are notified that disclosing, copying, distributing, or taking any action based on the contents is prohibited. If you received this email in error, please notify the sender immediately and delete all copies.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

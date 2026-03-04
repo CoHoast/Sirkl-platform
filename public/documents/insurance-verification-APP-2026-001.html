@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Insurance Verification - Margaret Thompson</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; font-size: 14px; line-height: 1.6; }
+    .header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #275380; }
+    .logo { font-size: 24px; font-weight: bold; color: #275380; margin-bottom: 5px; }
+    .form-title { font-size: 18px; color: #333; }
+    .verified-badge { display: inline-block; background: #dcfce7; color: #166534; padding: 8px 16px; border-radius: 20px; font-weight: bold; margin-top: 10px; }
+    .section { margin-bottom: 25px; }
+    .section-title { font-size: 14px; font-weight: bold; color: #275380; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid #ddd; text-transform: uppercase; }
+    .field-row { display: flex; margin-bottom: 8px; }
+    .field { flex: 1; margin-right: 20px; }
+    .field:last-child { margin-right: 0; }
+    .field-label { font-size: 11px; color: #666; margin-bottom: 2px; }
+    .field-value { padding: 8px; background: #f5f5f5; border-radius: 4px; min-height: 20px; }
+    .coverage-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .coverage-table th, .coverage-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    .coverage-table th { background: #f5f5f5; font-weight: bold; font-size: 12px; }
+    .coverage-table td { font-size: 13px; }
+    .status-approved { color: #166534; font-weight: bold; }
+    .status-pending { color: #ca8a04; font-weight: bold; }
+    .notes { background: #fffbeb; border: 1px solid #fde68a; padding: 15px; border-radius: 8px; margin-top: 15px; }
+    .notes-title { font-weight: bold; color: #92400e; margin-bottom: 5px; }
+    .footer { margin-top: 40px; font-size: 11px; color: #888; text-align: center; }
+    @media print { body { padding: 20px; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">OPTALIS HEALTHCARE</div>
+    <div class="form-title">Insurance Verification Report</div>
+    <div style="font-size: 12px; color: #666; margin-top: 5px;">Application ID: APP-2026-001 | Verified: February 24, 2026</div>
+    <div class="verified-badge">✓ COVERAGE VERIFIED</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Patient Information</div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Patient Name</div>
+        <div class="field-value">Margaret Elizabeth Thompson</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Date of Birth</div>
+        <div class="field-value">March 15, 1942</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Member ID</div>
+        <div class="field-value">1EG4-TE5-MK72</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Primary Insurance</div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Insurance Carrier</div>
+        <div class="field-value">Medicare</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Plan Type</div>
+        <div class="field-value">Medicare Part A & B (Original Medicare)</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Policy Number</div>
+        <div class="field-value">1EG4-TE5-MK72</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Group Number</div>
+        <div class="field-value">N/A (Original Medicare)</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Effective Date</div>
+        <div class="field-value">April 1, 2007</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Termination Date</div>
+        <div class="field-value">None (Active)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Secondary Insurance</div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Insurance Carrier</div>
+        <div class="field-value">AARP Medicare Supplement (Medigap Plan G)</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Policy Number</div>
+        <div class="field-value">MSG-2019-887412</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Coverage Details</div>
+    <table class="coverage-table">
+      <thead>
+        <tr>
+          <th>Service Type</th>
+          <th>Coverage</th>
+          <th>Patient Responsibility</th>
+          <th>Pre-Auth Required</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Skilled Nursing Facility</td>
+          <td>100% (Days 1-20)</td>
+          <td>$0 copay</td>
+          <td>No</td>
+          <td class="status-approved">Approved</td>
+        </tr>
+        <tr>
+          <td>Skilled Nursing Facility</td>
+          <td>Medigap covers (Days 21-100)</td>
+          <td>$0 copay</td>
+          <td>No</td>
+          <td class="status-approved">Approved</td>
+        </tr>
+        <tr>
+          <td>Memory Care Services</td>
+          <td>Covered under SNF benefit</td>
+          <td>$0 copay</td>
+          <td>No</td>
+          <td class="status-approved">Approved</td>
+        </tr>
+        <tr>
+          <td>Physical Therapy</td>
+          <td>80% after deductible</td>
+          <td>20% (Medigap covers)</td>
+          <td>No</td>
+          <td class="status-approved">Approved</td>
+        </tr>
+        <tr>
+          <td>Medication Management</td>
+          <td>Covered under Part D</td>
+          <td>Varies by medication</td>
+          <td>No</td>
+          <td class="status-approved">Approved</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Verification Details</div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Verified By</div>
+        <div class="field-value">Jennifer Walsh, Admissions Coordinator</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Verification Date</div>
+        <div class="field-value">February 24, 2026 at 10:45 AM</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Reference Number</div>
+        <div class="field-value">CMS-REF-2026-0224-8847</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Representative Spoke To</div>
+        <div class="field-value">Medicare Customer Service (1-800-MEDICARE)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="notes-title">Notes</div>
+    <p>Patient qualifies for Medicare SNF benefit following 3-day qualifying hospital stay at Beaumont Hospital (admitted 2/20/2026). Coverage verified through day 100. Medigap Plan G will cover the coinsurance for days 21-100. No prior authorization required for admission. Recommend initiating admission process immediately to ensure seamless transition from acute care.</p>
+  </div>
+
+  <div class="footer">
+    <p>Optalis Healthcare | 123 Healthcare Drive, Bloomfield Hills, MI 48301 | (248) 555-1000</p>
+    <p>This verification is valid for 30 days from the verification date. Benefits subject to change.</p>
+  </div>
+</body>
+</html>

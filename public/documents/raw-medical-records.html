@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Original Document - Medical Records (Scanned)</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Times New Roman', serif;
+      background: #d4d4d4;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .page-container {
+      max-width: 850px;
+      margin: 0 auto;
+    }
+    .scan-page {
+      background: #fafafa;
+      padding: 50px 60px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      position: relative;
+      /* Slight rotation for scanned look */
+      transform: rotate(0.2deg);
+    }
+    .scan-page::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    /* Coffee stain effect */
+    .coffee-stain {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, transparent 50%, rgba(139, 90, 43, 0.08) 60%, transparent 70%);
+      top: 40px;
+      right: 80px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #333;
+      margin-bottom: 20px;
+    }
+    .hospital-logo {
+      font-size: 22px;
+      font-weight: bold;
+      color: #1a365d;
+      letter-spacing: 1px;
+    }
+    .hospital-info {
+      font-size: 11px;
+      color: #555;
+      margin-top: 3px;
+    }
+    .patient-label {
+      text-align: right;
+      font-size: 10px;
+      background: #f0f0f0;
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+    }
+    .patient-label strong {
+      font-size: 12px;
+      display: block;
+    }
+    .doc-title {
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin: 20px 0;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-weight: bold;
+      font-size: 12px;
+      text-transform: uppercase;
+      background: #e8e8e8;
+      padding: 6px 10px;
+      margin-bottom: 10px;
+      border-left: 3px solid #1a365d;
+    }
+    .vitals-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-bottom: 15px;
+    }
+    .vitals-table th, .vitals-table td {
+      border: 1px solid #999;
+      padding: 8px;
+      text-align: center;
+    }
+    .vitals-table th {
+      background: #e8e8e8;
+      font-weight: bold;
+    }
+    .handwritten-note {
+      font-family: 'Comic Sans MS', 'Segoe Script', cursive;
+      color: #00008B;
+      font-size: 13px;
+    }
+    .typed-text {
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .indented {
+      margin-left: 20px;
+    }
+    .highlight-box {
+      background: #fffde7;
+      border: 1px solid #ffd54f;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 11px;
+    }
+    .allergy-warning {
+      background: #ffebee;
+      border: 2px solid #ef5350;
+      padding: 8px 12px;
+      margin: 10px 0;
+      font-weight: bold;
+      color: #c62828;
+      font-size: 12px;
+    }
+    .stamp {
+      position: absolute;
+      bottom: 60px;
+      right: 60px;
+      width: 120px;
+      height: 120px;
+      border: 3px solid #1565c0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #1565c0;
+      font-size: 10px;
+      font-weight: bold;
+      transform: rotate(-15deg);
+      opacity: 0.7;
+    }
+    .stamp-inner {
+      padding: 10px;
+    }
+    .signature-block {
+      margin-top: 30px;
+      display: flex;
+      gap: 40px;
+    }
+    .sig-field {
+      flex: 1;
+    }
+    .sig-line {
+      border-bottom: 1px solid #333;
+      height: 30px;
+      position: relative;
+    }
+    .sig-line .handwritten-note {
+      position: absolute;
+      bottom: 2px;
+    }
+    .sig-label {
+      font-size: 10px;
+      margin-top: 3px;
+      color: #666;
+    }
+    .footer {
+      margin-top: 30px;
+      padding-top: 15px;
+      border-top: 1px solid #ccc;
+      font-size: 9px;
+      color: #888;
+      text-align: center;
+    }
+    .page-number {
+      position: absolute;
+      bottom: 20px;
+      right: 60px;
+      font-size: 10px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <!-- Page 1 -->
+    <div class="scan-page">
+      <div class="coffee-stain"></div>
+      
+      <div class="header">
+        <div>
+          <div class="hospital-logo">BEAUMONT</div>
+          <div class="hospital-info">
+            Royal Oak Campus<br>
+            3601 W Thirteen Mile Rd<br>
+            Royal Oak, MI 48073<br>
+            (248) 898-5000
+          </div>
+        </div>
+        <div class="patient-label">
+          <strong>Thompson, Margaret E</strong>
+          DOB: 03/15/1942 (83F)<br>
+          MRN: BH-2019-445521<br>
+          Acct: 2026-0220-44521<br>
+          Admit: 02/20/2026
+        </div>
+      </div>
+
+      <div class="doc-title">Discharge Summary</div>
+
+      <div class="allergy-warning">
+        ⚠️ ALLERGIES: PENICILLIN (Rash), SULFA DRUGS (Hives/Dyspnea)
+      </div>
+
+      <div class="section">
+        <div class="section-title">Admission Diagnosis</div>
+        <div class="typed-text">
+          1. Urinary tract infection (N39.0)<br>
+          2. Acute encephalopathy secondary to UTI (G93.40)
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Discharge Diagnosis</div>
+        <div class="typed-text">
+          1. Urinary tract infection, treated (N39.0)<br>
+          2. Dementia, Alzheimer's type, moderate (G30.1, F02.80)<br>
+          3. Essential hypertension (I10)<br>
+          4. Type 2 diabetes mellitus (E11.9)<br>
+          5. History of falls (Z91.81)
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Hospital Course</div>
+        <div class="typed-text">
+          83 y/o female admitted 02/20/2026 via ED with acute confusion, fever 101.2°F, and dysuria. 
+          UA positive for bacteria, urine culture pending at admission grew E. coli >100,000 CFU/mL. 
+          Patient started on IV Ceftriaxone (given PCN allergy) with good response. Fever resolved 
+          within 24 hours. Mental status returned to baseline by hospital day 3.<br><br>
+          
+          <span class="handwritten-note">*Baseline dementia - family reports progressive decline over past 2 yrs. Living alone, not safe per family.*</span><br><br>
+          
+          Patient medically stable for discharge. Family meeting held 02/23 - daughter (POA) requesting 
+          SNF placement with memory care services. Unable to return home due to safety concerns and 
+          need for 24-hour supervision.
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Discharge Vitals (02/24/2026 @ 0800)</div>
+        <table class="vitals-table">
+          <tr>
+            <th>BP</th>
+            <th>HR</th>
+            <th>Temp</th>
+            <th>RR</th>
+            <th>O2 Sat</th>
+            <th>Weight</th>
+          </tr>
+          <tr>
+            <td>118/72</td>
+            <td>72</td>
+            <td>98.4°F</td>
+            <td>16</td>
+            <td>97% RA</td>
+            <td>142 lbs</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Discharge Medications</div>
+        <div class="typed-text">
+          1. Metformin 500mg PO BID with meals (continue home med)<br>
+          2. Lisinopril 10mg PO daily in AM (continue home med)<br>
+          3. Donepezil 5mg PO QHS (continue home med)<br>
+          4. Ciprofloxacin 500mg PO BID x 3 more days (NEW - to complete 7-day course)
+        </div>
+      </div>
+
+      <div class="highlight-box">
+        <strong>COGNITIVE ASSESSMENT (MMSE):</strong> 18/30 - Moderate cognitive impairment<br>
+        Deficits noted in: short-term memory, orientation to time, executive function<br>
+        <span class="handwritten-note">Recommend memory care level of service - Dr. Chen</span>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Discharge Disposition</div>
+        <div class="typed-text">
+          Discharge to: <strong>Skilled Nursing Facility / Memory Care</strong><br>
+          Facility: Cranberry Park at West Bloomfield (pending bed availability)<br>
+          Level of Care: Memory Care with skilled nursing oversight<br>
+          Transport: Ambulance stretcher (non-emergent)
+        </div>
+      </div>
+
+      <div class="signature-block">
+        <div class="sig-field">
+          <div class="sig-line"><span class="handwritten-note" style="font-style: italic;">Robert Chen, MD</span></div>
+          <div class="sig-label">Attending Physician Signature</div>
+        </div>
+        <div class="sig-field">
+          <div class="sig-line"><span class="handwritten-note">02/24/2026</span></div>
+          <div class="sig-label">Date</div>
+        </div>
+      </div>
+
+      <div class="stamp">
+        <div class="stamp-inner">
+          BEAUMONT<br>HEALTH<br>MEDICAL<br>RECORDS<br>✓
+        </div>
+      </div>
+
+      <div class="footer">
+        Beaumont Health System | This document contains confidential patient information protected by state and federal law.
+      </div>
+
+      <div class="page-number">Page 1 of 1</div>
+    </div>
+  </div>
+</body>
+</html>

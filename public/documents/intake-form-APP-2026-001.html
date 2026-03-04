@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Patient Intake Form - Margaret Thompson</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; font-size: 14px; line-height: 1.6; }
+    .header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #275380; }
+    .logo { font-size: 24px; font-weight: bold; color: #275380; margin-bottom: 5px; }
+    .form-title { font-size: 18px; color: #333; }
+    .section { margin-bottom: 25px; }
+    .section-title { font-size: 14px; font-weight: bold; color: #275380; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid #ddd; text-transform: uppercase; }
+    .field-row { display: flex; margin-bottom: 8px; }
+    .field { flex: 1; margin-right: 20px; }
+    .field:last-child { margin-right: 0; }
+    .field-label { font-size: 11px; color: #666; margin-bottom: 2px; }
+    .field-value { padding: 8px; background: #f5f5f5; border-radius: 4px; min-height: 20px; }
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; }
+    .checkbox-item { display: flex; align-items: center; gap: 5px; }
+    .checkbox { width: 14px; height: 14px; border: 1px solid #333; display: inline-block; }
+    .checkbox.checked { background: #275380; }
+    .signature-section { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; }
+    .signature-line { border-bottom: 1px solid #333; width: 250px; margin-top: 40px; }
+    .footer { margin-top: 40px; font-size: 11px; color: #888; text-align: center; }
+    @media print { body { padding: 20px; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">OPTALIS HEALTHCARE</div>
+    <div class="form-title">Patient Intake Form</div>
+    <div style="font-size: 12px; color: #666; margin-top: 5px;">Application ID: APP-2026-001 | Date: February 24, 2026</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Patient Information</div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Full Legal Name</div>
+        <div class="field-value">Margaret Elizabeth Thompson</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Date of Birth</div>
+        <div class="field-value">March 15, 1942</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Age</div>
+        <div class="field-value">83</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Social Security Number</div>
+        <div class="field-value">***-**-4521</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Gender</div>
+        <div class="field-value">Female</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Marital Status</div>
+        <div class="field-value">Widowed</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Current Address</div>
+        <div class="field-value">1234 Oak Street, Bloomfield Hills, MI 48301</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Phone Number</div>
+        <div class="field-value">(248) 555-0123</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Email Address</div>
+        <div class="field-value">mthompson42@email.com</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Emergency Contact</div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Name</div>
+        <div class="field-value">Susan Thompson-Miller</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Relationship</div>
+        <div class="field-value">Daughter</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Phone</div>
+        <div class="field-value">(248) 555-0456</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Medical Information</div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Primary Diagnosis</div>
+        <div class="field-value">Dementia (Alzheimer's Type), Hypertension, Type 2 Diabetes</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Current Medications</div>
+        <div class="field-value">Metformin 500mg (2x daily), Lisinopril 10mg (1x daily), Donepezil 5mg (1x daily at bedtime)</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Known Allergies</div>
+        <div class="field-value">Penicillin (rash), Sulfa drugs (hives)</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Primary Care Physician</div>
+        <div class="field-value">Dr. Robert Chen, MD - Beaumont Health Internal Medicine</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Physician Phone</div>
+        <div class="field-value">(248) 555-7890</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Requested Services</div>
+    <div class="checkbox-group">
+      <div class="checkbox-item"><span class="checkbox checked"></span> Memory Care</div>
+      <div class="checkbox-item"><span class="checkbox checked"></span> Medication Management</div>
+      <div class="checkbox-item"><span class="checkbox checked"></span> Physical Therapy</div>
+      <div class="checkbox-item"><span class="checkbox"></span> Occupational Therapy</div>
+      <div class="checkbox-item"><span class="checkbox"></span> Speech Therapy</div>
+      <div class="checkbox-item"><span class="checkbox"></span> Skilled Nursing</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Preferred Facility</div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">First Choice</div>
+        <div class="field-value">Cranberry Park at West Bloomfield</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Preferred Admission Date</div>
+        <div class="field-value">March 1, 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="signature-section">
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Signature of Responsible Party</div>
+        <div class="signature-line"></div>
+        <div style="font-size: 11px; color: #666; margin-top: 5px;">Susan Thompson-Miller (Daughter, POA)</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Date</div>
+        <div class="signature-line" style="width: 150px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Optalis Healthcare | 123 Healthcare Drive, Bloomfield Hills, MI 48301 | (248) 555-1000</p>
+    <p>This form contains confidential patient health information protected under HIPAA.</p>
+  </div>
+</body>
+</html>

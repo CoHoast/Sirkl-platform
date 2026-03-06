@@ -238,7 +238,12 @@ export default function ClientsPage() {
                           {client.name.split(' ').map(w => w[0]).slice(0, 2).join('')}
                         </div>
                         <div>
-                          <p style={{ fontWeight: 600, color: '#0a0f1a', marginBottom: '2px' }}>{client.name}</p>
+                          <a 
+                            href={`/dashboard/clients/${client.id}`}
+                            style={{ fontWeight: 600, color: '#0a0f1a', marginBottom: '2px', textDecoration: 'none', display: 'block' }}
+                          >
+                            {client.name}
+                          </a>
                           <p style={{ fontSize: '13px', color: '#6b7280' }}>{client.slug}</p>
                         </div>
                       </div>

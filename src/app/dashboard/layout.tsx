@@ -158,11 +158,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div>
       {/* Mobile Header */}
       <div className="mobile-header">
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img src="/dokit-logo.png" alt="DOKit" style={{ height: '32px' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ 
+            width: 32, 
+            height: 32, 
+            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', 
+            borderRadius: '8px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
+          }}>
+            <svg width="18" height="18" fill="white" viewBox="0 0 24 24">
+              <path d="M13 3L4 14h7l-2 7 9-11h-7l2-7z"/>
+            </svg>
+          </div>
+          <span style={{ fontSize: '18px', fontWeight: 700, color: 'white' }}>DOKit</span>
         </div>
         <button className="mobile-menu-btn" onClick={() => setSidebarOpen(true)}>
-          <svg width="24" height="24" fill="none" stroke="#0f172a" strokeWidth="2" viewBox="0 0 24 24">
+          <svg width="24" height="24" fill="none" stroke="#e2e8f0" strokeWidth="2" viewBox="0 0 24 24">
             <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
           </svg>
         </button>
@@ -174,8 +188,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Sidebar */}
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-logo">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <img src="/dokit-logo.png" alt="DOKit" style={{ height: '36px' }} />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ 
+                width: 36, 
+                height: 36, 
+                background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', 
+                borderRadius: '10px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
+              }}>
+                <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
+                  <path d="M13 3L4 14h7l-2 7 9-11h-7l2-7z"/>
+                </svg>
+              </div>
+              <span style={{ fontSize: '20px', fontWeight: 700, color: 'white', letterSpacing: '-0.02em' }}>DOKit</span>
+            </div>
             <button 
               onClick={closeSidebar}
               style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', padding: '8px' }}
@@ -186,11 +216,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </svg>
             </button>
           </div>
-          <p>Admin Dashboard</p>
+          <p style={{ color: '#64748b', marginTop: '4px' }}>Super Admin</p>
         </div>
 
         {/* Client Switcher */}
-        <div style={{ padding: '16px', borderBottom: '1px solid #e2e8f0' }}>
+        <div style={{ padding: '16px', borderBottom: '1px solid #1e293b' }}>
           <div 
             onClick={() => setShowClientDropdown(!showClientDropdown)}
             style={{
@@ -198,10 +228,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '12px 16px',
-              background: selectedClient ? 'rgba(0, 212, 255, 0.15)' : '#f8fafc',
-              borderRadius: '8px',
+              background: selectedClient ? 'rgba(99, 102, 241, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '10px',
               cursor: 'pointer',
-              border: selectedClient ? '1px solid #6366f1' : '1px solid #e2e8f0',
+              border: selectedClient ? '1px solid rgba(99, 102, 241, 0.3)' : '1px solid #334155',
               transition: 'all 0.2s',
             }}
           >
@@ -209,18 +239,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div style={{
                 width: 32,
                 height: 32,
-                borderRadius: '6px',
-                background: selectedClient ? '#6366f1' : '#e2e8f0',
+                borderRadius: '8px',
+                background: selectedClient ? 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' : '#334155',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-                <svg width="16" height="16" fill="none" stroke={selectedClient ? '#0f172a' : '#475569'} strokeWidth="2" viewBox="0 0 24 24">
+                <svg width="16" height="16" fill="none" stroke={selectedClient ? 'white' : '#94a3b8'} strokeWidth="2" viewBox="0 0 24 24">
                   <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
               <div>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0' }}>
                   {selectedClient ? selectedClient.name : 'All Clients'}
                 </div>
                 <div style={{ fontSize: '11px', color: '#64748b' }}>

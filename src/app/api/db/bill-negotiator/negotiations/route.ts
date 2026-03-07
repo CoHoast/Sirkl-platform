@@ -89,7 +89,6 @@ export async function POST(request: NextRequest) {
     const offerLetterUrl = data.offerLetterUrl || data.offer_letter_url;
     const offerSentVia = data.offerSentVia || data.offer_sent_via;
     const autoNegotiated = data.autoNegotiated || data.auto_negotiated;
-    const round = data.round || 1;
 
     if (!billId) {
       return NextResponse.json({ error: 'billId is required' }, { status: 400 });
@@ -110,16 +109,16 @@ export async function POST(request: NextRequest) {
         bill_id, client_id, strategy,
         initial_offer, current_offer, max_acceptable, walk_away_max,
         offer_letter_url, offer_sent_via, offer_sent_at,
-        response_type, auto_negotiated, round
+        response_type, auto_negotiated, created_at, updated_at
       ) VALUES (
-        $1, $2, $3, $4, $4, $5, $6, $7, $8, NOW(), 'pending', $9, $10
+        $1, $2, $3, $4, $4, $5, $6, $7, $8, NOW(), 'pending', $9, NOW(), NOW()
       )
       RETURNING *
     `, [
       billId, clientId, strategy || 'cash_pay',
       initialOffer, maxAcceptable, walkAwayMax,
       offerLetterUrl, offerSentVia || 'fax',
-      autoNegotiated || false, round
+      autoNegotiated || false
     ]);
 
     // Update bill status

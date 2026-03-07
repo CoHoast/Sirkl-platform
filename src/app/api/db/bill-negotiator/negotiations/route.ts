@@ -5,8 +5,8 @@ import { pool } from '@/lib/db';
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const clientId = searchParams.get('clientId');
-    const billId = searchParams.get('billId');
+    const clientId = searchParams.get('clientId') || searchParams.get('client_id');
+    const billId = searchParams.get('billId') || searchParams.get('bill_id');
     const status = searchParams.get('status');
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');

@@ -177,16 +177,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
-            boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
+            boxShadow: '0 2px 8px rgba(99, 102, 241, 0.25)'
           }}>
             <svg width="18" height="18" fill="white" viewBox="0 0 24 24">
               <path d="M13 3L4 14h7l-2 7 9-11h-7l2-7z"/>
             </svg>
           </div>
-          <span style={{ fontSize: '18px', fontWeight: 700, color: 'white' }}>DOKit</span>
+          <span style={{ fontSize: '18px', fontWeight: 700, color: '#111827' }}>DOKit</span>
         </div>
         <button className="mobile-menu-btn" onClick={() => setSidebarOpen(true)}>
-          <svg width="24" height="24" fill="none" stroke="#e2e8f0" strokeWidth="2" viewBox="0 0 24 24">
+          <svg width="24" height="24" fill="none" stroke="#374151" strokeWidth="2" viewBox="0 0 24 24">
             <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
           </svg>
         </button>
@@ -208,29 +208,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
+                boxShadow: '0 2px 8px rgba(99, 102, 241, 0.25)'
               }}>
                 <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
                   <path d="M13 3L4 14h7l-2 7 9-11h-7l2-7z"/>
                 </svg>
               </div>
-              <span style={{ fontSize: '20px', fontWeight: 700, color: 'white', letterSpacing: '-0.02em' }}>DOKit</span>
+              <span style={{ fontSize: '20px', fontWeight: 700, color: '#111827', letterSpacing: '-0.02em' }}>DOKit</span>
             </div>
             <button 
               onClick={closeSidebar}
               style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', padding: '8px' }}
               className="mobile-close-btn"
             >
-              <svg width="24" height="24" fill="none" stroke="#64748b" strokeWidth="2" viewBox="0 0 24 24">
+              <svg width="24" height="24" fill="none" stroke="#6b7280" strokeWidth="2" viewBox="0 0 24 24">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
             </button>
           </div>
-          <p style={{ color: '#64748b', marginTop: '4px' }}>Super Admin</p>
+          <p style={{ color: '#9ca3af', marginTop: '4px' }}>Super Admin</p>
         </div>
 
         {/* Client Switcher */}
-        <div style={{ padding: '16px', borderBottom: '1px solid #1e293b' }}>
+        <div style={{ padding: '16px', borderBottom: '1px solid #e5e7eb' }}>
           <div 
             onClick={() => setShowClientDropdown(!showClientDropdown)}
             style={{
@@ -238,10 +238,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '12px 16px',
-              background: selectedClient ? 'rgba(99, 102, 241, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+              background: selectedClient ? '#eef2ff' : '#f9fafb',
               borderRadius: '10px',
               cursor: 'pointer',
-              border: selectedClient ? '1px solid rgba(99, 102, 241, 0.3)' : '1px solid #334155',
+              border: selectedClient ? '1px solid #c7d2fe' : '1px solid #e5e7eb',
               transition: 'all 0.2s',
             }}
           >
@@ -250,20 +250,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 width: 32,
                 height: 32,
                 borderRadius: '8px',
-                background: selectedClient ? 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' : '#334155',
+                background: selectedClient ? 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' : '#e5e7eb',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-                <svg width="16" height="16" fill="none" stroke={selectedClient ? 'white' : '#94a3b8'} strokeWidth="2" viewBox="0 0 24 24">
+                <svg width="16" height="16" fill="none" stroke={selectedClient ? 'white' : '#6b7280'} strokeWidth="2" viewBox="0 0 24 24">
                   <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
               <div>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: '#111827' }}>
                   {selectedClient ? selectedClient.name : 'All Clients'}
                 </div>
-                <div style={{ fontSize: '11px', color: '#64748b' }}>
+                <div style={{ fontSize: '11px', color: '#6b7280' }}>
                   {selectedClient ? 'Client View' : 'Platform View'}
                 </div>
               </div>
@@ -272,7 +272,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               width="16" 
               height="16" 
               fill="none" 
-              stroke="#64748b" 
+              stroke="#6b7280" 
               strokeWidth="2" 
               viewBox="0 0 24 24"
               style={{ 
@@ -410,7 +410,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div style={{ 
                 fontSize: '11px', 
                 fontWeight: 600, 
-                color: 'rgba(255,255,255,0.4)', 
+                color: '#9ca3af', 
                 textTransform: 'uppercase', 
                 letterSpacing: '0.05em',
                 padding: '0 16px',

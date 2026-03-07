@@ -13,6 +13,7 @@ import {
 } from './types';
 import { generateOfferLetterHTML, generateOfferLetterText, getTemplate } from './pdf-generator';
 import { pool } from '../db';
+import { getMedicareRate } from '../extraction/medicare-rates';
 
 // Initialize AWS SES client
 const sesClient = new SESClient({
@@ -280,9 +281,6 @@ export class CommunicationService {
 
 // Singleton instance
 export const communicationService = new CommunicationService();
-
-// Import Medicare rates lookup
-import { getMedicareRate } from '../extraction/medicare-rates';
 
 // Helper: Build letter data from bill and negotiation
 export async function buildLetterData(

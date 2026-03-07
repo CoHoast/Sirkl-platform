@@ -74,7 +74,7 @@ export default function ClientsPage() {
 
   const runMigration = async () => {
     try {
-      const res = await fetch('/api/db/clients/migrate', { method: 'POST' });
+      const res = await fetch('/api/migrations/clients', { method: 'POST' });
       const data = await res.json();
       if (data.success) {
         setNeedsMigration(false);

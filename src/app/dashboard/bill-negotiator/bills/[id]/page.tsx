@@ -283,6 +283,7 @@ export default function BillDetailPage() {
       
       if (recipient && negotiationId) {
         // Send the offer via email/fax
+        console.log('Sending offer:', { billId, negotiationId, sendMethod, recipient, offerAmount });
         const sendRes = await fetch('/api/communication/send', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -297,12 +298,15 @@ export default function BillDetailPage() {
         });
         
         const sendData = await sendRes.json();
-        if (!sendData.success) {
+        if (sendData.success) {
+          alert(`✅ Offer sent successfully via ${sendMethod} to ${recipient}`);
+        } else {
           console.warn('Offer created but email failed:', sendData.error);
-          alert(`Offer created but sending failed: ${sendData.error || 'Unknown error'}. You can resend from the negotiation history.`);
+          alert(`⚠️ Offer created but sending failed: ${sendData.error || 'Unknown error'}. You can resend from the negotiation history.`);
         }
       } else {
-        alert('Offer created but no provider email/fax on file. Please add contact info and send manually.');
+        console.log('Missing recipient:', { provider_fax: bill?.provider_fax, provider_email: bill?.provider_email });
+        alert(`⚠️ Offer created but no provider email/fax on file (fax: ${bill?.provider_fax || 'none'}, email: ${bill?.provider_email || 'none'}). Please add contact info and send manually.`);
       }
       
       setShowOfferModal(false);

@@ -12,9 +12,32 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
-import { rulesEngine } from '@/lib/rules/engine';
 import { communicationService, buildLetterData } from '@/lib/communication/service';
 import { randomBytes } from 'crypto';
+
+// Simple API key for cron/automation access
+const CRON_SECRET = process.env.CRON_SECRET || 'dokit-auto-process-2026';
+
+function validateCronAuth(request: NextRequest): boolean {
+  const authHeader = request.headers.get('authorization');
+  const apiKey = request.headers.get('x-api-key');
+  
+  // Check bearer token or x-api-key header
+  if (authHeader?.startsWith('Bearer ')) {
+    return authHeader.slice(7) === CRON_SECRET;
+  }
+  if (apiKey === CRON_SECRET) {
+    return true;
+  }
+  
+  // Also allow from localhost/internal for testing
+  const host = request.headers.get('host') || '';
+  if (host.includes('localhost') || host.includes('127.0.0.1')) {
+    return true;
+  }
+  
+  return false;
+}
 
 // Generate response token
 function generateResponseToken(): string {
@@ -337,6 +360,11 @@ export async function scheduleAutoResponse(negotiationId: number, settings: any)
 }
 
 export async function POST(request: NextRequest) {
+  // Validate cron/API access
+  if (!validateCronAuth(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  
   try {
     const body = await request.json();
     const { action, billId, clientId } = body;

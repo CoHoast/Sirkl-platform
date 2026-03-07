@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
+import { SendOfferModal } from '@/components/SendOfferModal';
 
 interface LineItem {
   cpt_code: string;
@@ -89,6 +90,7 @@ export default function BillDetailPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [showResponseModal, setShowResponseModal] = useState(false);
+  const [showSendModal, setShowSendModal] = useState(false);
   const [offerAmount, setOfferAmount] = useState('');
   const [offerStrategy, setOfferStrategy] = useState('cash_pay');
   const [responseType, setResponseType] = useState('accepted');
@@ -865,10 +867,11 @@ export default function BillDetailPage() {
                 <span style={{ color: '#0f172a', fontWeight: 500, fontSize: '14px' }}>Edit Bill Details</span>
               </button>
               <button
+                onClick={() => setShowSendModal(true)}
                 style={{
                   padding: '12px 16px',
-                  background: '#f8fafc',
-                  border: '1px solid #e2e8f0',
+                  background: 'linear-gradient(135deg, #8B5CF6 0%, #7c3aed 100%)',
+                  border: 'none',
                   borderRadius: '8px',
                   textAlign: 'left',
                   cursor: 'pointer',
@@ -877,10 +880,10 @@ export default function BillDetailPage() {
                   gap: '12px'
                 }}
               >
-                <svg width="18" height="18" fill="none" stroke="#64748b" strokeWidth="2" viewBox="0 0 24 24">
-                  <path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                <svg width="18" height="18" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                 </svg>
-                <span style={{ color: '#0f172a', fontWeight: 500, fontSize: '14px' }}>Generate Offer Letter</span>
+                <span style={{ color: 'white', fontWeight: 600, fontSize: '14px' }}>📤 Send Offer Letter</span>
               </button>
               <button
                 style={{
@@ -896,27 +899,9 @@ export default function BillDetailPage() {
                 }}
               >
                 <svg width="18" height="18" fill="none" stroke="#64748b" strokeWidth="2" viewBox="0 0 24 24">
-                  <path d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8"/>
+                  <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
-                <span style={{ color: '#0f172a', fontWeight: 500, fontSize: '14px' }}>Send via Fax</span>
-              </button>
-              <button
-                style={{
-                  padding: '12px 16px',
-                  background: '#f8fafc',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '8px',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px'
-                }}
-              >
-                <svg width="18" height="18" fill="none" stroke="#64748b" strokeWidth="2" viewBox="0 0 24 24">
-                  <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
-                <span style={{ color: '#0f172a', fontWeight: 500, fontSize: '14px' }}>Send via Email</span>
+                <span style={{ color: '#0f172a', fontWeight: 500, fontSize: '14px' }}>View Communication History</span>
               </button>
             </div>
           </div>
@@ -1048,6 +1033,29 @@ export default function BillDetailPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Send Offer Modal (Phase 2C) */}
+      {showSendModal && bill && (
+        <SendOfferModal
+          bill={{
+            id: bill.id,
+            provider_name: bill.provider_name,
+            provider_fax: undefined, // Add to bill interface if available
+            provider_email: undefined, // Add to bill interface if available
+            member_name: bill.member_name,
+            total_billed: bill.total_billed,
+            fair_price: bill.fair_price
+          }}
+          negotiationId={latestNegotiation?.id}
+          onClose={() => setShowSendModal(false)}
+          onSent={(result) => {
+            setShowSendModal(false);
+            fetchBill();
+            fetchNegotiations();
+            alert(`Offer sent successfully! Tracking ID: ${result.trackingId || 'N/A'}`);
+          }}
+        />
       )}
 
       {/* Record Response Modal */}

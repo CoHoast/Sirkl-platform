@@ -241,17 +241,17 @@ export default function NewBillPage() {
     
     try {
       const payload = {
-        client_id: selectedClient.id,
-        member_id: formData.member_id || `M-${Date.now()}`,
-        member_name: formData.member_name,
-        provider_name: formData.provider_name,
-        provider_npi: formData.provider_npi,
-        provider_phone: formData.provider_phone,
-        provider_fax: formData.provider_fax,
-        account_number: formData.account_number || `ACC-${Date.now()}`,
-        date_of_service: formData.date_of_service || new Date().toISOString().split('T')[0],
-        total_billed: parseFloat(formData.total_billed),
-        line_items: lineItems.filter(li => li.cpt_code || li.description),
+        clientId: selectedClient.id,
+        memberId: formData.member_id || `M-${Date.now()}`,
+        memberName: formData.member_name,
+        providerName: formData.provider_name,
+        providerNpi: formData.provider_npi,
+        providerPhone: formData.provider_phone,
+        providerFax: formData.provider_fax,
+        accountNumber: formData.account_number || `ACC-${Date.now()}`,
+        dateOfService: formData.date_of_service || new Date().toISOString().split('T')[0],
+        totalBilled: parseFloat(formData.total_billed),
+        lineItems: lineItems.filter(li => li.cpt_code || li.description),
         notes: formData.notes,
         status: 'received',
         source: uploadedFile ? 'ai_extraction' : 'manual'

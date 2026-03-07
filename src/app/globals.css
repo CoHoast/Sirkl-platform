@@ -590,16 +590,19 @@ h1, h2, h3, h4 {
   }
 }
 
-@supports (padding: max(0px)) {
-  .mobile-header {
-    padding-left: max(16px, env(safe-area-inset-left));
-    padding-right: max(16px, env(safe-area-inset-right));
-    padding-top: env(safe-area-inset-top);
-    height: calc(64px + env(safe-area-inset-top));
-  }
-  
-  .main-content {
-    padding-top: calc(80px + env(safe-area-inset-top)) !important;
+/* Safe area insets only apply on mobile when mobile-header is visible */
+@media screen and (max-width: 1024px) {
+  @supports (padding: max(0px)) {
+    .mobile-header {
+      padding-left: max(16px, env(safe-area-inset-left));
+      padding-right: max(16px, env(safe-area-inset-right));
+      padding-top: env(safe-area-inset-top);
+      height: calc(64px + env(safe-area-inset-top));
+    }
+    
+    .main-content {
+      padding-top: calc(80px + env(safe-area-inset-top)) !important;
+    }
   }
 }
 

@@ -96,11 +96,11 @@ export default function DashboardPage() {
   const maxDocCount = Math.max(...documentTypes.map(d => d.count));
 
   const recentDocuments = [
-    { name: 'CMS-1500_Johnson_Sarah.pdf', type: 'CMS-1500', subtype: 'Professional Claim', time: '2 min ago', status: 'Completed', confidence: 98, iconColor: colors.purpleLight, iconStroke: colors.purple },
-    { name: 'UB04_Memorial_Hospital_03072026.pdf', type: 'UB-04', subtype: 'Institutional Claim', time: '5 min ago', status: 'Completed', confidence: 96, iconColor: colors.amberLight, iconStroke: colors.amber },
-    { name: 'EOB_BlueCross_Batch_247.pdf', type: 'EOB', subtype: 'Explanation of Benefits', time: '8 min ago', status: 'Review', confidence: 87, iconColor: colors.cyanLight, iconStroke: colors.cyan },
-    { name: 'CMS-1500_Williams_Michael.pdf', type: 'CMS-1500', subtype: 'Professional Claim', time: '12 min ago', status: 'Completed', confidence: 99, iconColor: colors.purpleLight, iconStroke: colors.purple },
-    { name: 'Invoice_Unclear_Scan.pdf', type: 'Unknown', subtype: 'Unknown Type', time: '15 min ago', status: 'Failed', confidence: null, iconColor: colors.roseLight, iconStroke: colors.rose },
+    { name: 'CMS-1500_Johnson_Sarah.pdf', type: 'CMS-1500', subtype: 'Professional Claim', time: '2 min ago', status: 'Completed', confidence: 98 },
+    { name: 'UB04_Memorial_Hospital_03072026.pdf', type: 'UB-04', subtype: 'Institutional Claim', time: '5 min ago', status: 'Completed', confidence: 96 },
+    { name: 'EOB_BlueCross_Batch_247.pdf', type: 'EOB', subtype: 'Explanation of Benefits', time: '8 min ago', status: 'Review', confidence: 87 },
+    { name: 'CMS-1500_Williams_Michael.pdf', type: 'CMS-1500', subtype: 'Professional Claim', time: '12 min ago', status: 'Completed', confidence: 99 },
+    { name: 'Invoice_Unclear_Scan.pdf', type: 'Unknown', subtype: 'Unknown Type', time: '15 min ago', status: 'Failed', confidence: null },
   ];
 
   const copyEmail = () => {
@@ -113,42 +113,39 @@ export default function DashboardPage() {
     <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
       
       {/* Header */}
-      <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '22px', fontWeight: '600', color: colors.text, marginBottom: '4px' }}>
-          Dashboard
-        </h1>
-        <p style={{ fontSize: '14px', color: colors.textSecondary }}>
-          Welcome back, {client?.name?.split(' ')[0] || 'Admin'}
-        </p>
+      <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <h1 style={{ fontSize: '22px', fontWeight: '600', color: colors.text, marginBottom: '4px' }}>
+            Dashboard
+          </h1>
+          <p style={{ fontSize: '14px', color: colors.textSecondary }}>
+            Welcome back, {client?.name?.split(' ')[0] || 'Admin'}
+          </p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: colors.textMuted, fontSize: '12px' }}>
+          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: colors.green }} />
+          Last synced: Just now
+        </div>
       </div>
 
-      {/* Email Intake Card with Gradient Background */}
+      {/* Email Intake Card with Subtle Gradient Background */}
       <div style={{
-        background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(236, 72, 153, 0.05) 50%, rgba(59, 130, 246, 0.05) 100%)',
+        background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.06) 0%, rgba(139, 92, 246, 0.03) 100%)',
         borderRadius: '16px',
         padding: '24px',
         marginBottom: '24px',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        border: '1px solid rgba(139, 92, 246, 0.1)'
       }}>
-        {/* Decorative gradient orb */}
+        {/* Subtle decorative gradient */}
         <div style={{
           position: 'absolute',
-          top: '-60px',
-          right: '-60px',
-          width: '200px',
-          height: '200px',
-          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)',
-          borderRadius: '50%',
-          pointerEvents: 'none'
-        }} />
-        <div style={{
-          position: 'absolute',
-          bottom: '-40px',
-          right: '100px',
-          width: '120px',
-          height: '120px',
-          background: 'radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, transparent 70%)',
+          top: '-80px',
+          right: '-80px',
+          width: '240px',
+          height: '240px',
+          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 60%)',
           borderRadius: '50%',
           pointerEvents: 'none'
         }} />
@@ -421,18 +418,18 @@ export default function DashboardPage() {
                   onMouseEnter={(e) => e.currentTarget.style.background = colors.borderLight}
                   onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                 >
-                  {/* Document Type Icon */}
+                  {/* Document Type Icon - All purple for cohesion */}
                   <div style={{
                     width: '40px',
                     height: '40px',
                     borderRadius: '10px',
-                    background: doc.iconColor,
+                    background: colors.purpleLight,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0
                   }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={doc.iconStroke} strokeWidth="2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={colors.purple} strokeWidth="2">
                       <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
                       <polyline points="14 2 14 8 20 8"/>
                     </svg>

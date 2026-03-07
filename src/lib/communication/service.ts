@@ -288,6 +288,9 @@ export async function buildLetterData(
   offerAmount: number,
   clientId: number
 ): Promise<OfferLetterData> {
+  // Import Medicare rates lookup
+  const { getMedicareRate } = await import('../extraction/medicare-rates');
+  
   // Fetch bill details
   const billResult = await pool.query(`
     SELECT b.*, 
@@ -312,6 +315,48 @@ export async function buildLetterData(
   
   const negotiation = negResult.rows[0] || {};
   
+  // Process line items - look up Medicare rates and get billed amounts
+  const rawLineItems = bill.line_items || [];
+  const processedLineItems = [];
+  let totalMedicare = 0;
+  
+  for (const item of rawLineItems) {
+    // Get billed amount from various possible fields
+    const billedAmount = parseFloat(item.billed_amount) || 
+                         parseFloat(item.charge) || 
+                         parseFloat(item.amount) || 
+                         parseFloat(item.total) || 0;
+    
+    // Look up Medicare rate if not stored or is 0
+    let medicareRate = parseFloat(item.medicare_rate) || 0;
+    if (medicareRate === 0 && item.cpt_code) {
+      const rateData = await getMedicareRate(item.cpt_code);
+      if (rateData) {
+        medicareRate = rateData.facility_rate;
+      }
+    }
+    
+    totalMedicare += medicareRate;
+    
+    // Calculate offered amount per line item (proportional to billed)
+    const totalBilled = parseFloat(bill.total_billed) || 1;
+    const proportion = billedAmount / totalBilled;
+    const offeredAmount = parseFloat(item.offered_amount) || (offerAmount * proportion);
+    
+    processedLineItems.push({
+      cptCode: item.cpt_code || '',
+      description: item.description || '',
+      billedAmount: billedAmount,
+      medicareRate: medicareRate,
+      offeredAmount: offeredAmount
+    });
+  }
+  
+  // Calculate fair market value (150% of Medicare) if not stored
+  const storedFairPrice = parseFloat(bill.fair_price) || 0;
+  const calculatedFairPrice = totalMedicare * 1.5;
+  const fairMarketValue = storedFairPrice > 0 ? storedFairPrice : calculatedFairPrice;
+  
   // Build the letter data
   const letterData: OfferLetterData = {
     // Organization
@@ -335,18 +380,12 @@ export async function buildLetterData(
     // Bill details
     billId: bill.id.toString(),
     originalAmount: parseFloat(bill.total_billed) || 0,
-    fairMarketValue: parseFloat(bill.fair_price) || 0,
+    fairMarketValue: fairMarketValue,
     offerAmount: offerAmount,
     offerPercentage: Math.round((offerAmount / parseFloat(bill.total_billed)) * 100),
     
-    // Line items
-    lineItems: (bill.line_items || []).map((item: any) => ({
-      cptCode: item.cpt_code || '',
-      description: item.description || '',
-      billedAmount: parseFloat(item.billed_amount) || 0,
-      medicareRate: parseFloat(item.medicare_rate) || 0,
-      offeredAmount: parseFloat(item.offered_amount) || offerAmount / (bill.line_items?.length || 1)
-    })),
+    // Line items (now with actual amounts and Medicare rates)
+    lineItems: processedLineItems,
     
     // Negotiation
     negotiationId: negotiationId.toString(),

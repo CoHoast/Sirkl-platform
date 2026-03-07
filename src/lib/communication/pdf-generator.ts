@@ -259,20 +259,22 @@ export function generateOfferLetterHTML(
   
   <div class="reference-box">
     <h3>Patient & Service Reference</h3>
-    <div class="reference-row">
-      <div class="reference-item">
-        <div class="reference-label">Patient Name</div>
-        <div class="reference-value">${data.patientName}</div>
-      </div>
-      <div class="reference-item">
-        <div class="reference-label">Member ID</div>
-        <div class="reference-value">${data.memberId}</div>
-      </div>
-      <div class="reference-item">
-        <div class="reference-label">Date of Service</div>
-        <div class="reference-value">${formatDate(data.dateOfService)}</div>
-      </div>
-    </div>
+    <table style="width: 100%; border-collapse: collapse;">
+      <tr>
+        <td style="width: 33%; padding: 8px 12px 8px 0; vertical-align: top;">
+          <div class="reference-label">Patient Name</div>
+          <div class="reference-value">${data.patientName}</div>
+        </td>
+        <td style="width: 33%; padding: 8px 12px; vertical-align: top; border-left: 1px solid #e5e7eb;">
+          <div class="reference-label">Member ID</div>
+          <div class="reference-value">${data.memberId}</div>
+        </td>
+        <td style="width: 33%; padding: 8px 0 8px 12px; vertical-align: top; border-left: 1px solid #e5e7eb;">
+          <div class="reference-label">Date of Service</div>
+          <div class="reference-value">${formatDate(data.dateOfService)}</div>
+        </td>
+      </tr>
+    </table>
   </div>
   
   <div class="subject">RE: ${subject}</div>

@@ -38,7 +38,7 @@ const MEDICARE_RATES_CACHE: Record<string, { facility: number; nonFacility: numb
   '73600': { facility: 20, nonFacility: 20, description: 'Ankle X-ray' },
   '72148': { facility: 259, nonFacility: 259, description: 'MRI lumbar spine without contrast' },
   '72158': { facility: 385, nonFacility: 385, description: 'MRI lumbar spine with and without contrast' },
-  '73721': { facility: 244, nonFacility: 244, description: 'MRI joint lower extremity' },
+  '73718': { facility: 244, nonFacility: 244, description: 'MRI lower extremity other than joint' },
   '73221': { facility: 244, nonFacility: 244, description: 'MRI joint upper extremity' },
   '70553': { facility: 389, nonFacility: 389, description: 'MRI brain with and without contrast' },
   '74176': { facility: 135, nonFacility: 135, description: 'CT abdomen and pelvis without contrast' },
@@ -62,9 +62,22 @@ const MEDICARE_RATES_CACHE: Record<string, { facility: number; nonFacility: numb
   '97530': { facility: 32, nonFacility: 36, description: 'Therapeutic activities' },
   
   // Injections
-  '20610': { facility: 38, nonFacility: 58, description: 'Joint injection, major' },
+  '20610': { facility: 38, nonFacility: 58, description: 'Arthrocentesis, aspiration/injection, major joint' },
   '64483': { facility: 106, nonFacility: 178, description: 'Epidural injection, lumbar' },
   '62322': { facility: 75, nonFacility: 108, description: 'Epidural injection, lumbar/sacral' },
+  '96372': { facility: 22, nonFacility: 28, description: 'Therapeutic, prophylactic, or diagnostic injection' },
+  '96373': { facility: 26, nonFacility: 32, description: 'Therapeutic, prophylactic, or diagnostic injection, IV push' },
+  '96374': { facility: 45, nonFacility: 55, description: 'Therapeutic, prophylactic, or diagnostic injection, IV infusion' },
+  '96375': { facility: 18, nonFacility: 22, description: 'Each additional sequential IV push' },
+  
+  // Fluoroscopy
+  '77002': { facility: 52, nonFacility: 65, description: 'Fluoroscopic guidance for needle placement' },
+  '77003': { facility: 68, nonFacility: 85, description: 'Fluoroscopic guidance for spine injection' },
+  
+  // Additional MRI codes
+  '73721': { facility: 244, nonFacility: 244, description: 'MRI joint lower extremity, without contrast' },
+  '73722': { facility: 289, nonFacility: 289, description: 'MRI joint lower extremity, with contrast' },
+  '73723': { facility: 338, nonFacility: 338, description: 'MRI joint lower extremity, with and without contrast' },
 };
 
 // Fair price multiplier (typically 125-150% of Medicare)

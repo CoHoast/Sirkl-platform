@@ -722,7 +722,7 @@ export default function BillDetailPage() {
                     onClick={() => {
                       // If counter received, open send offer modal with counter context
                       if (neg.response_type === 'countered' || neg.response_status === 'counter_received') {
-                        setShowSendOfferModal(true);
+                        setShowOfferModal(true);
                       }
                     }}
                     style={{ 

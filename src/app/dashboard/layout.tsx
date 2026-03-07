@@ -561,8 +561,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
 
       {/* Main Content */}
-      <main className="main-content">
-        {/* Frosted Glass Header */}
+      <main className="main-content" style={{ padding: 0 }}>
+        {/* Frosted Glass Header - Fixed to top */}
         <header className="frosted-header" style={{
           position: 'sticky',
           top: 0,
@@ -572,12 +572,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 24px',
-          marginBottom: '0',
-          marginLeft: '-32px',
-          marginRight: '-32px',
-          marginTop: '-32px',
-          paddingTop: '0',
+          padding: '0 32px',
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(12px)',
         }}>
           <div>
             <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b', margin: 0 }}>
@@ -609,7 +606,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </header>
         
         {/* Content with Gradient Orb */}
-        <div style={{ position: 'relative', paddingTop: '24px' }}>
+        <div style={{ position: 'relative', padding: '24px 32px 32px' }}>
           {/* Gradient Orb Background */}
           <div style={{ position: 'absolute', top: 0, right: 0, width: '500px', height: '500px', pointerEvents: 'none', zIndex: 0 }}>
             <div className="dashboard-orb" style={{ width: '100%', height: '100%', borderRadius: '50%' }}></div>

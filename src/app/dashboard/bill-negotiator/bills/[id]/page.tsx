@@ -893,7 +893,7 @@ export default function BillDetailPage() {
                     {neg.savings_amount && (
                       <div style={{ marginTop: '12px', padding: '10px', background: '#ecfdf5', borderRadius: '6px' }}>
                         <p style={{ fontSize: '13px', color: '#059669', fontWeight: 500 }}>
-                          Saved {formatCurrency(neg.savings_amount)} ({neg.savings_percent?.toFixed(0)}%)
+                          Saved {formatCurrency(neg.savings_amount)} ({parseFloat(String(neg.savings_percent || 0)).toFixed(0)}%)
                         </p>
                       </div>
                     )}

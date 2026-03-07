@@ -43,11 +43,13 @@ interface Negotiation {
   bill_id: number;
   round: number;
   strategy: string;
-  offer_amount: number;
+  initial_offer?: number;
+  current_offer?: number;
   counter_amount?: number;
   final_amount?: number;
   status: string;
   response_status: string;
+  response_type?: string;
   savings_amount?: number;
   savings_percent?: number;
   offer_sent_at?: string;
@@ -717,12 +719,28 @@ export default function BillDetailPage() {
                 {negotiations.map((neg, i) => (
                   <div 
                     key={neg.id}
+                    onClick={() => {
+                      // If counter received, open send offer modal with counter context
+                      if (neg.response_type === 'countered' || neg.response_status === 'counter_received') {
+                        setShowSendOfferModal(true);
+                      }
+                    }}
                     style={{ 
                       padding: '16px',
                       background: i === 0 ? '#f8fafc' : 'white',
                       borderRadius: '10px',
                       marginBottom: i < negotiations.length - 1 ? '12px' : 0,
-                      border: i === 0 ? '1px solid #e2e8f0' : 'none'
+                      border: i === 0 ? '1px solid #e2e8f0' : 'none',
+                      cursor: (neg.response_type === 'countered' || neg.response_status === 'counter_received') ? 'pointer' : 'default',
+                      transition: 'background 0.2s'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (neg.response_type === 'countered' || neg.response_status === 'counter_received') {
+                        e.currentTarget.style.background = '#f1f5f9';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = i === 0 ? '#f8fafc' : 'white';
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
@@ -776,12 +794,17 @@ export default function BillDetailPage() {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
                       <div>
                         <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Our Offer</p>
-                        <p style={{ fontWeight: 600, color: '#0f172a' }}>{formatCurrency(neg.offer_amount)}</p>
+                        <p style={{ fontWeight: 600, color: '#0f172a' }}>{formatCurrency(neg.current_offer || neg.initial_offer || 0)}</p>
                       </div>
                       {neg.counter_amount && (
                         <div>
                           <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Their Counter</p>
                           <p style={{ fontWeight: 600, color: '#d97706' }}>{formatCurrency(neg.counter_amount)}</p>
+                          {(neg.response_type === 'countered' || neg.response_status === 'counter_received') && (
+                            <p style={{ fontSize: '11px', color: '#6366f1', marginTop: '4px', fontWeight: 500 }}>
+                              → Click to respond
+                            </p>
+                          )}
                         </div>
                       )}
                       {neg.final_amount && (

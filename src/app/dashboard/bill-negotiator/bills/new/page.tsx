@@ -232,6 +232,9 @@ export default function NewBillPage() {
       return;
     }
     
+    console.log('Selected client:', selectedClient);
+    console.log('Client ID:', selectedClient.id);
+    
     if (!formData.member_name || !formData.provider_name || !formData.total_billed) {
       alert('Please fill in required fields: Member Name, Provider Name, and Total Billed');
       return;

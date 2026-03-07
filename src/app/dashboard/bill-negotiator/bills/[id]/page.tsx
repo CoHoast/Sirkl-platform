@@ -277,9 +277,33 @@ export default function BillDetailPage() {
       const negData = await res.json();
       const negotiationId = negData.negotiation?.id;
       
-      // Determine send method and recipient (prefer email over fax)
-      const sendMethod = bill?.provider_email ? 'email' : 'fax';
-      const recipient = bill?.provider_email || bill?.provider_fax;
+      // Determine send method - continue with same method as previous communication
+      // Check the last negotiation's method, or default to email if first offer
+      let sendMethod: 'email' | 'fax' = 'email';
+      let recipient = bill?.provider_email;
+      
+      // If there are previous negotiations, check how the last one was sent
+      if (negotiations.length > 0) {
+        const lastNeg = negotiations[0]; // Most recent
+        if (lastNeg.offer_sent_via === 'fax' && bill?.provider_fax) {
+          sendMethod = 'fax';
+          recipient = bill.provider_fax;
+        } else if (lastNeg.offer_sent_via === 'email' && bill?.provider_email) {
+          sendMethod = 'email';
+          recipient = bill.provider_email;
+        }
+      }
+      
+      // Fallback: if no recipient for preferred method, try the other
+      if (!recipient) {
+        if (sendMethod === 'email' && bill?.provider_fax) {
+          sendMethod = 'fax';
+          recipient = bill.provider_fax;
+        } else if (sendMethod === 'fax' && bill?.provider_email) {
+          sendMethod = 'email';
+          recipient = bill.provider_email;
+        }
+      }
       
       if (recipient && negotiationId) {
         // Send the offer via email/fax
@@ -299,6 +323,12 @@ export default function BillDetailPage() {
         
         const sendData = await sendRes.json();
         if (sendData.success) {
+          // Update negotiation with the method used
+          await fetch(`/api/db/bill-negotiator/negotiations/${negotiationId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ offer_sent_via: sendMethod })
+          });
           alert(`✅ Offer sent successfully via ${sendMethod} to ${recipient}`);
         } else {
           console.warn('Offer created but email failed:', sendData.error);

@@ -281,6 +281,9 @@ export class CommunicationService {
 // Singleton instance
 export const communicationService = new CommunicationService();
 
+// Import Medicare rates lookup
+import { getMedicareRate } from '../extraction/medicare-rates';
+
 // Helper: Build letter data from bill and negotiation
 export async function buildLetterData(
   billId: number,
@@ -288,8 +291,6 @@ export async function buildLetterData(
   offerAmount: number,
   clientId: number
 ): Promise<OfferLetterData> {
-  // Import Medicare rates lookup
-  const { getMedicareRate } = await import('../extraction/medicare-rates');
   
   // Fetch bill details
   const billResult = await pool.query(`

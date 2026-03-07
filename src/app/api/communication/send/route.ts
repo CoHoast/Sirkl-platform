@@ -49,13 +49,13 @@ export async function POST(request: NextRequest) {
     if (!negId) {
       const negResult = await pool.query(`
         INSERT INTO negotiations (
-          bill_id, initial_offer, current_offer, strategy, status,
+          bill_id, client_id, initial_offer, current_offer, strategy, status,
           response_token, response_token_expires, response_type,
           created_at, updated_at
         )
-        VALUES ($1, $2, $2, 'medicare_percentage', 'pending', $3, $4, 'pending', NOW(), NOW())
+        VALUES ($1, $2, $3, $3, 'medicare_percentage', 'pending', $4, $5, 'pending', NOW(), NOW())
         RETURNING id
-      `, [billId, offerAmount, responseToken, expiresAt]);
+      `, [billId, clientId, offerAmount, responseToken, expiresAt]);
       negId = negResult.rows[0].id;
     } else {
       // Update negotiation with new offer and token

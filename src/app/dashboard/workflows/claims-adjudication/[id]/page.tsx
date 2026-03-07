@@ -227,7 +227,7 @@ export default function ClaimDetailPage() {
           {/* Provider Information */}
           <div style={{ background: 'white', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
             <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#64748b', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              🏥 Provider Information
+              Provider Information
             </h3>
             <div style={{ display: 'grid', gap: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #f1f5f9' }}>
@@ -246,7 +246,7 @@ export default function ClaimDetailPage() {
           {/* Clinical Codes */}
           <div style={{ background: 'white', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
             <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#64748b', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              📋 Clinical Codes
+              Clinical Codes
             </h3>
             
             <div style={{ marginBottom: '16px' }}>
@@ -306,7 +306,7 @@ export default function ClaimDetailPage() {
           {claim.payment_recommendation && (
             <div style={{ background: '#f0fdf4', borderRadius: '12px', padding: '24px', border: '1px solid #bbf7d0' }}>
               <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#166534', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                💰 Payment Recommendation
+                Payment Recommendation
               </h3>
               <div style={{ display: 'grid', gap: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

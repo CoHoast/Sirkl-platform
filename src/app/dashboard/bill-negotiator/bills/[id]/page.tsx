@@ -70,12 +70,12 @@ interface ProviderIntel {
 // Status progression for visual indicator
 const STATUS_STEPS = [
   { key: 'received', label: 'Received', icon: '📥' },
-  { key: 'analyzing', label: 'Analyzing', icon: '🔍' },
-  { key: 'ready_to_negotiate', label: 'Ready', icon: '✅' },
+  { key: 'analyzing', label: 'Analyzing', icon: 'search' },
+  { key: 'ready_to_negotiate', label: 'Ready', icon: 'check' },
   { key: 'offer_sent', label: 'Offer Sent', icon: '📤' },
   { key: 'awaiting_response', label: 'Awaiting', icon: '⏳' },
   { key: 'settled', label: 'Settled', icon: '🤝' },
-  { key: 'paid', label: 'Paid', icon: '💰' },
+  { key: 'paid', label: 'Paid', icon: 'dollar' },
 ];
 
 export default function BillDetailPage() {
@@ -787,7 +787,7 @@ export default function BillDetailPage() {
                     {neg.savings_amount && (
                       <div style={{ marginTop: '12px', padding: '10px', background: '#ecfdf5', borderRadius: '6px' }}>
                         <p style={{ fontSize: '13px', color: '#059669', fontWeight: 500 }}>
-                          💰 Saved {formatCurrency(neg.savings_amount)} ({neg.savings_percent?.toFixed(0)}%)
+                          Saved {formatCurrency(neg.savings_amount)} ({neg.savings_percent?.toFixed(0)}%)
                         </p>
                       </div>
                     )}

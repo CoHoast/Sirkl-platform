@@ -46,7 +46,7 @@ const workflowLabels: Record<string, { name: string; description: string; icon: 
   'document-intake': {
     name: 'Document Intake',
     description: 'AI-powered document classification and data extraction',
-    icon: '📄'
+    icon: 'document'
   },
   'member-intake': {
     name: 'Member Intake',
@@ -56,7 +56,7 @@ const workflowLabels: Record<string, { name: string; description: string; icon: 
   'claims-adjudication': {
     name: 'Claims Adjudication',
     description: 'Automated claims review and decision support',
-    icon: '💰'
+    icon: 'dollar'
   },
   'provider-bills': {
     name: 'Provider Bills',

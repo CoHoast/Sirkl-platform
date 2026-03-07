@@ -67,19 +67,19 @@ export default function AuditLogPage() {
 
   const getEventIcon = (eventType: string) => {
     const icons: Record<string, string> = {
-      'bill.created': '📄',
+      'bill.created': '•',
       'bill.updated': '✏️',
-      'bill.analyzed': '🔍',
+      'bill.analyzed': '•',
       'negotiation.created': '💬',
       'negotiation.offer_sent': '📤',
       'negotiation.response': '📥',
       'negotiation.settled': '🤝',
       'communication.sent': '📨',
-      'communication.delivered': '✅',
+      'communication.delivered': '•',
       'rule.executed': '🤖',
-      'settings.updated': '⚙️'
+      'settings.updated': '•'
     };
-    return icons[eventType] || '📋';
+    return icons[eventType] || '•';
   };
 
   const getEntityLink = (entry: AuditEntry) => {

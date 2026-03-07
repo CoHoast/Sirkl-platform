@@ -125,7 +125,7 @@ export default function ReviewQueuePage() {
           alignItems: 'center',
           gap: '10px'
         }}>
-          <span style={{ fontSize: '24px' }}>{items.length > 0 ? '⚠️' : '✅'}</span>
+          <span style={{ fontSize: '24px' }}>{items.length > 0 ? '!' : '✓'}</span>
           <div>
             <p style={{ fontWeight: 600, color: items.length > 0 ? '#92400e' : '#166534' }}>
               {items.length} item{items.length !== 1 ? 's' : ''} pending
@@ -474,7 +474,7 @@ export default function ReviewQueuePage() {
                   gap: '12px'
                 }}
               >
-                <span style={{ fontSize: '20px' }}>📋</span>
+                <span style={{ fontSize: '16px', color: '#7c3aed' }}>•</span>
                 <div>
                   <p style={{ fontWeight: 600, color: '#0f172a' }}>View Full Bill</p>
                   <p style={{ fontSize: '13px', color: '#64748b' }}>See complete bill details</p>

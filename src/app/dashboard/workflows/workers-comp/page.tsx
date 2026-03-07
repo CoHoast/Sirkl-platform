@@ -211,10 +211,10 @@ export default function WorkersCompWorkflowPage() {
   ]);
 
   const tabs = [
-    { id: 'processed', label: `Processed FROIs (${processedFROIs.length})`, icon: '📄' },
-    { id: 'config', label: 'Integration Config', icon: '⚙️' },
-    { id: 'froi', label: 'FROI Settings', icon: '📋' },
-    { id: 'sroi', label: 'SROI Settings', icon: '📊' },
+    { id: 'processed', label: `Processed FROIs (${processedFROIs.length})`, icon: 'document' },
+    { id: 'config', label: 'Integration Config', icon: 'settings' },
+    { id: 'froi', label: 'FROI Settings', icon: 'clipboard' },
+    { id: 'sroi', label: 'SROI Settings', icon: 'chart' },
     { id: 'edi', label: 'EDI / State Bureaus', icon: '🏛️' },
     { id: 'queue', label: 'Processing Queue', icon: '📥' },
   ];
@@ -679,7 +679,7 @@ export default function WorkersCompWorkflowPage() {
                         </span>
                         {item.flags.map((flag, i) => (
                           <span key={i} style={{ padding: '4px 8px', background: flag.type === 'critical' ? '#fee2e2' : '#fef3c7', color: flag.type === 'critical' ? '#dc2626' : '#d97706', borderRadius: '4px', fontSize: '12px' }}>
-                            ⚠️ {flag.message}
+                            • {flag.message}
                           </span>
                         ))}
                       </div>
@@ -706,7 +706,7 @@ export default function WorkersCompWorkflowPage() {
 
           <div style={{ marginTop: '16px', padding: '12px', background: '#fef3c7', borderRadius: '8px', border: '1px solid #fde68a' }}>
             <p style={{ margin: 0, fontSize: '13px', color: '#92400e' }}>
-              <strong>⚠️ Compliance Alert:</strong> 2 reports pending review with filing deadlines within 5 days. Ohio requires FROI submission within 7 days of employer knowledge.
+              <strong>• Compliance Alert:</strong> 2 reports pending review with filing deadlines within 5 days. Ohio requires FROI submission within 7 days of employer knowledge.
             </p>
           </div>
         </div>

@@ -370,7 +370,7 @@ IEA*1*000000001~`;
         {/* Employer Information */}
         <div style={{ background: 'white', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
           <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span>🏢</span> Employer Information
+            Employer Information
           </h3>
           <div style={{ display: 'grid', gap: '12px' }}>
             <div>
@@ -388,7 +388,7 @@ IEA*1*000000001~`;
       {/* Injury Details */}
       <div style={{ background: 'white', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', marginTop: '24px' }}>
         <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span>🏥</span> Injury Details
+          Injury Details
         </h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '16px' }}>
           <div>

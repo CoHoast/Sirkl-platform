@@ -372,8 +372,8 @@ export default function WorkflowSchedulingPage() {
                       <div style={{ marginTop: '16px', padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px' }}>
                         <p style={{ fontSize: '12px', color: '#6b7280' }}>
                           Last run: {new Date(schedule.last_run).toLocaleString()} 
-                          {schedule.last_run_status === 'success' && ` ✅ ${schedule.last_run_count} docs processed`}
-                          {schedule.last_run_status === 'failed' && ' ❌ Failed'}
+                          {schedule.last_run_status === 'success' && ` ✓ ${schedule.last_run_count} docs processed`}
+                          {schedule.last_run_status === 'failed' && ' × Failed'}
                         </p>
                       </div>
                     )}
@@ -538,7 +538,7 @@ export default function WorkflowSchedulingPage() {
                     onClick={() => setFormData({...formData, input_type: type as any})}
                   >
                     {type === 's3' && '☁️ S3'}
-                    {type === 'sftp' && '📁 SFTP'}
+                    {type === 'sftp' && 'SFTP'}
                     {type === 'email' && '📧 Email'}
                   </button>
                 ))}

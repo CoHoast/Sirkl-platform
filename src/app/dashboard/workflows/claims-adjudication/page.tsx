@@ -60,8 +60,8 @@ export default function ClaimsAdjudicationWorkflowPage() {
   }, [activeTab, selectedClient]);
 
   const tabs = [
-    { id: 'processed', label: `Processed Claims (${processedClaims.length})`, icon: '📋' },
-    { id: 'config', label: 'Integration Config', icon: '⚙️' },
+    { id: 'processed', label: `Processed Claims (${processedClaims.length})`, icon: 'document' },
+    { id: 'config', label: 'Integration Config', icon: 'settings' },
     { id: 'rules', label: 'Adjudication Rules', icon: '📜' },
   ];
 
@@ -80,9 +80,9 @@ export default function ClaimsAdjudicationWorkflowPage() {
 
   const getDecisionStyle = (decision: string) => {
     switch (decision?.toLowerCase()) {
-      case 'approve': return { bg: '#dcfce7', color: '#16a34a', icon: '✅' };
-      case 'deny': return { bg: '#fee2e2', color: '#dc2626', icon: '❌' };
-      case 'review': return { bg: '#fef3c7', color: '#d97706', icon: '⚠️' };
+      case 'approve': return { bg: '#dcfce7', color: '#16a34a', icon: 'check' };
+      case 'deny': return { bg: '#fee2e2', color: '#dc2626', icon: 'x' };
+      case 'review': return { bg: '#fef3c7', color: '#d97706', icon: 'alert' };
       default: return { bg: '#f3f4f6', color: '#6b7280', icon: '❓' };
     }
   };

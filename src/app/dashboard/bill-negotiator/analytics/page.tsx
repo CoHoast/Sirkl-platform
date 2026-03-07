@@ -370,7 +370,7 @@ export default function AnalyticsPage() {
                 textDecoration: 'none',
                 transition: 'background 0.15s'
               }}>
-                <span style={{ fontSize: '16px' }}>📋</span>
+                <span style={{ fontSize: '14px', color: '#7c3aed' }}>•</span>
                 <span style={{ color: '#0f172a', fontWeight: 500, fontSize: '14px' }}>View All Bills</span>
               </Link>
               <Link href="/dashboard/bill-negotiator/bills?status=awaiting_response" style={{

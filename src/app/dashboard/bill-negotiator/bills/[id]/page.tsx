@@ -306,7 +306,7 @@ export default function BillDetailPage() {
       };
       
       if (responseType === 'accepted') {
-        payload.final_amount = activeNeg.offer_amount;
+        payload.final_amount = activeNeg.current_offer || activeNeg.initial_offer;
         payload.status = 'accepted';
       } else if (responseType === 'counter_received' && counterAmount) {
         payload.counter_amount = parseFloat(counterAmount);

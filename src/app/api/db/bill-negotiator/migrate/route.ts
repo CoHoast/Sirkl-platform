@@ -223,6 +223,41 @@ export async function POST() {
       ADD COLUMN IF NOT EXISTS notes TEXT
     `);
 
+    // Create bill_extractions table for AI extraction results
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS bill_extractions (
+        id SERIAL PRIMARY KEY,
+        bill_id INTEGER REFERENCES bills(id) ON DELETE CASCADE UNIQUE,
+        extraction_id VARCHAR(100),
+        
+        status VARCHAR(50) DEFAULT 'pending',
+        -- pending, processing, completed, review_needed, failed
+        
+        overall_confidence INTEGER,
+        -- 0-100 confidence score
+        
+        extracted_data JSONB,
+        -- Full extraction result with all fields and confidence scores
+        
+        fair_price_data JSONB,
+        -- Calculated fair prices for each line item
+        
+        fields_needing_review JSONB,
+        -- Array of field paths that need human review
+        
+        processing_time_ms INTEGER,
+        ocr_provider VARCHAR(50),
+        ai_provider VARCHAR(50),
+        
+        reviewed_at TIMESTAMP,
+        reviewed_by VARCHAR(255),
+        review_notes TEXT,
+        
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      )
+    `);
+
     // Create indexes for performance
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_bills_client_id ON bills(client_id);
@@ -239,12 +274,14 @@ export async function POST() {
       CREATE INDEX IF NOT EXISTS idx_bill_providers_client_npi ON bill_providers(client_id, npi);
       
       CREATE INDEX IF NOT EXISTS idx_medicare_rates_code ON medicare_rates(code, code_type);
+      CREATE INDEX IF NOT EXISTS idx_bill_extractions_bill_id ON bill_extractions(bill_id);
+      CREATE INDEX IF NOT EXISTS idx_bill_extractions_status ON bill_extractions(status);
     `);
 
     return NextResponse.json({ 
       success: true, 
       message: 'Bill Negotiator tables created successfully',
-      tables: ['bills', 'negotiations', 'bill_providers', 'negotiation_communications', 'medicare_rates']
+      tables: ['bills', 'negotiations', 'bill_providers', 'negotiation_communications', 'medicare_rates', 'bill_extractions']
     });
 
   } catch (error: any) {

@@ -5,6 +5,8 @@ import { extractTextFromPdf } from '@/lib/textract-service';
 // System prompt for GPT-4o Vision (images)
 const VISION_EXTRACTION_PROMPT = `You are a medical bill data extraction expert. Extract all relevant information from this medical bill image and return it as structured JSON.
 
+IMPORTANT: Look carefully for provider contact information (fax numbers, email addresses) in the letterhead, footer, or billing section. These are critical for automated bill negotiation.
+
 Return this exact structure:
 {
   "provider": {
@@ -13,7 +15,9 @@ Return this exact structure:
     "address": { "value": "Full Address", "confidence": 85 },
     "phone": { "value": "(xxx) xxx-xxxx", "confidence": 80 },
     "fax": { "value": "(xxx) xxx-xxxx", "confidence": 75 },
-    "tax_id": { "value": "xx-xxxxxxx", "confidence": 85 }
+    "email": { "value": "billing@provider.com", "confidence": 70 },
+    "tax_id": { "value": "xx-xxxxxxx", "confidence": 85 },
+    "billing_department": { "value": "Billing Dept Name if different", "confidence": 60 }
   },
   "member": {
     "name": { "value": "Patient Full Name", "confidence": 95 },
@@ -58,6 +62,8 @@ Rules:
 // System prompt for GPT-4 Text (OCR text from PDFs)
 const TEXT_EXTRACTION_PROMPT = `You are a medical bill data extraction expert. The following text was extracted via OCR from a medical bill PDF. Extract all relevant information and return it as structured JSON.
 
+IMPORTANT: Look carefully for provider contact information (fax numbers, email addresses) in the text. These are critical for automated bill negotiation. Fax numbers often appear near phone numbers. Email addresses may be in billing sections.
+
 Return this exact structure:
 {
   "provider": {
@@ -66,7 +72,9 @@ Return this exact structure:
     "address": { "value": "Full Address", "confidence": 85 },
     "phone": { "value": "(xxx) xxx-xxxx", "confidence": 80 },
     "fax": { "value": "(xxx) xxx-xxxx", "confidence": 75 },
-    "tax_id": { "value": "xx-xxxxxxx", "confidence": 85 }
+    "email": { "value": "billing@provider.com", "confidence": 70 },
+    "tax_id": { "value": "xx-xxxxxxx", "confidence": 85 },
+    "billing_department": { "value": "Billing Dept Name if different", "confidence": 60 }
   },
   "member": {
     "name": { "value": "Patient Full Name", "confidence": 95 },

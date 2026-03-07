@@ -13,6 +13,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
 import { communicationService, buildLetterData } from '@/lib/communication/service';
+import { enrichBillWithNPI } from '@/lib/npi-lookup';
 import { randomBytes } from 'crypto';
 
 // Simple API key for cron/automation access
@@ -152,9 +153,29 @@ async function processNewBills(clientId?: number): Promise<{ processed: number; 
           
           const negotiationId = negResult.rows[0].id;
           
-          // Determine send method
-          const sendMethod = bill.provider_email ? 'email' : (bill.provider_fax ? 'fax' : null);
-          const recipient = bill.provider_email || bill.provider_fax;
+          // Try to enrich bill with NPI data if missing contact info
+          let providerEmail = bill.provider_email;
+          let providerFax = bill.provider_fax;
+          
+          if (!providerEmail && !providerFax && bill.provider_npi) {
+            console.log(`[AUTO] Bill ${bill.id}: No contact info, trying NPI lookup for ${bill.provider_npi}`);
+            const npiData = await enrichBillWithNPI(bill);
+            if (npiData) {
+              // Update bill with NPI data
+              if (npiData.provider_fax) {
+                providerFax = npiData.provider_fax;
+                await pool.query(`UPDATE bills SET provider_fax = $1 WHERE id = $2`, [providerFax, bill.id]);
+                console.log(`[AUTO] Bill ${bill.id}: Found fax via NPI: ${providerFax}`);
+              }
+              if (npiData.provider_phone && !bill.provider_phone) {
+                await pool.query(`UPDATE bills SET provider_phone = $1 WHERE id = $2`, [npiData.provider_phone, bill.id]);
+              }
+            }
+          }
+          
+          // Determine send method (prefer email, fallback to fax)
+          const sendMethod = providerEmail ? 'email' : (providerFax ? 'fax' : null);
+          const recipient = providerEmail || providerFax;
           
           if (recipient && sendMethod) {
             // Build letter data and send

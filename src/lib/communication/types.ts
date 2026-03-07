@@ -69,6 +69,10 @@ export interface OfferLetterData {
   
   // Optional custom note
   customMessage?: string;
+  
+  // Provider response portal (for autonomous negotiation)
+  responseUrl?: string;
+  responseToken?: string;
 }
 
 export interface CommunicationRecord {

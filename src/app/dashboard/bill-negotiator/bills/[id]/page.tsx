@@ -48,8 +48,7 @@ interface Negotiation {
   counter_amount?: number;
   final_amount?: number;
   status: string;
-  response_status: string;
-  response_type?: string;
+  response_type: string;
   savings_amount?: number;
   savings_percent?: number;
   offer_sent_at?: string;
@@ -292,7 +291,7 @@ export default function BillDetailPage() {
   };
 
   const recordResponse = async () => {
-    const activeNeg = negotiations.find(n => n.response_status === 'pending');
+    const activeNeg = negotiations.find(n => n.response_type === 'pending');
     if (!activeNeg) {
       alert('No pending negotiation found');
       return;
@@ -301,7 +300,7 @@ export default function BillDetailPage() {
     setActionLoading(true);
     try {
       const payload: Record<string, unknown> = {
-        response_status: responseType,
+        response_type: responseType,
         response_received_at: new Date().toISOString()
       };
       
@@ -369,7 +368,7 @@ export default function BillDetailPage() {
   const statusStyle = getStatusColor(bill.status);
   const potentialSavings = bill.total_billed - (bill.fair_price || 0);
   const savingsPercent = bill.fair_price ? ((potentialSavings / bill.total_billed) * 100).toFixed(0) : null;
-  const activeNegotiation = negotiations.find(n => n.response_status === 'pending');
+  const activeNegotiation = negotiations.find(n => n.response_type === 'pending');
   const latestNegotiation = negotiations[0];
 
   return (
@@ -721,7 +720,7 @@ export default function BillDetailPage() {
                     key={neg.id}
                     onClick={() => {
                       // If counter received, open send offer modal with counter context
-                      if (neg.response_type === 'countered' || neg.response_status === 'counter_received') {
+                      if (neg.response_type === 'countered' || neg.response_type === 'counter_received') {
                         setShowOfferModal(true);
                       }
                     }}
@@ -731,11 +730,11 @@ export default function BillDetailPage() {
                       borderRadius: '10px',
                       marginBottom: i < negotiations.length - 1 ? '12px' : 0,
                       border: i === 0 ? '1px solid #e2e8f0' : 'none',
-                      cursor: (neg.response_type === 'countered' || neg.response_status === 'counter_received') ? 'pointer' : 'default',
+                      cursor: (neg.response_type === 'countered' || neg.response_type === 'counter_received') ? 'pointer' : 'default',
                       transition: 'background 0.2s'
                     }}
                     onMouseEnter={(e) => {
-                      if (neg.response_type === 'countered' || neg.response_status === 'counter_received') {
+                      if (neg.response_type === 'countered' || neg.response_type === 'counter_received') {
                         e.currentTarget.style.background = '#f1f5f9';
                       }
                     }}
@@ -778,16 +777,16 @@ export default function BillDetailPage() {
                         borderRadius: '6px',
                         fontSize: '12px',
                         fontWeight: 600,
-                        background: neg.response_status === 'accepted' ? '#dcfce7' : 
-                                   neg.response_status === 'counter_received' ? '#fef3c7' :
-                                   neg.response_status === 'rejected' ? '#fee2e2' : '#f1f5f9',
-                        color: neg.response_status === 'accepted' ? '#16a34a' : 
-                               neg.response_status === 'counter_received' ? '#d97706' :
-                               neg.response_status === 'rejected' ? '#dc2626' : '#64748b'
+                        background: neg.response_type === 'accepted' ? '#dcfce7' : 
+                                   neg.response_type === 'counter_received' ? '#fef3c7' :
+                                   neg.response_type === 'rejected' ? '#fee2e2' : '#f1f5f9',
+                        color: neg.response_type === 'accepted' ? '#16a34a' : 
+                               neg.response_type === 'counter_received' ? '#d97706' :
+                               neg.response_type === 'rejected' ? '#dc2626' : '#64748b'
                       }}>
-                        {neg.response_status === 'pending' ? 'Awaiting Response' : 
-                         neg.response_status === 'accepted' ? 'Accepted' :
-                         neg.response_status === 'counter_received' ? 'Counter Received' : 'Rejected'}
+                        {neg.response_type === 'pending' ? 'Awaiting Response' : 
+                         neg.response_type === 'accepted' ? 'Accepted' :
+                         neg.response_type === 'counter_received' ? 'Counter Received' : 'Rejected'}
                       </span>
                     </div>
                     
@@ -800,7 +799,7 @@ export default function BillDetailPage() {
                         <div>
                           <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Their Counter</p>
                           <p style={{ fontWeight: 600, color: '#d97706' }}>{formatCurrency(neg.counter_amount)}</p>
-                          {(neg.response_type === 'countered' || neg.response_status === 'counter_received') && (
+                          {(neg.response_type === 'countered' || neg.response_type === 'counter_received') && (
                             <p style={{ fontSize: '11px', color: '#6366f1', marginTop: '4px', fontWeight: 500 }}>
                               → Click to respond
                             </p>

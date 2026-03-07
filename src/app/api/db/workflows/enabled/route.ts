@@ -2,6 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
 import { WORKFLOWS } from '@/config/workflows';
 
+// CORS headers for cross-origin requests from Client Dashboard
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+/**
+ * OPTIONS /api/db/workflows/enabled
+ * Handle CORS preflight
+ */
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 /**
  * GET /api/db/workflows/enabled?clientId=123
  * 
@@ -13,7 +28,7 @@ export async function GET(request: NextRequest) {
   const clientId = searchParams.get('clientId');
   
   if (!clientId) {
-    return NextResponse.json({ error: 'clientId required' }, { status: 400 });
+    return NextResponse.json({ error: 'clientId required' }, { status: 400, headers: corsHeaders });
   }
   
   try {
@@ -51,13 +66,13 @@ export async function GET(request: NextRequest) {
       clientId: parseInt(clientId),
       workflows,
       count: workflows.length
-    });
+    }, { headers: corsHeaders });
     
   } catch (error) {
     console.error('Error fetching enabled workflows:', error);
     return NextResponse.json(
       { error: 'Failed to fetch workflows' },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }

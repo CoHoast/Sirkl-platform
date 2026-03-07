@@ -66,6 +66,17 @@ interface ProviderIntel {
   notes?: string;
 }
 
+// Status progression for visual indicator
+const STATUS_STEPS = [
+  { key: 'received', label: 'Received', icon: '📥' },
+  { key: 'analyzing', label: 'Analyzing', icon: '🔍' },
+  { key: 'ready_to_negotiate', label: 'Ready', icon: '✅' },
+  { key: 'offer_sent', label: 'Offer Sent', icon: '📤' },
+  { key: 'awaiting_response', label: 'Awaiting', icon: '⏳' },
+  { key: 'settled', label: 'Settled', icon: '🤝' },
+  { key: 'paid', label: 'Paid', icon: '💰' },
+];
+
 export default function BillDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -188,6 +199,12 @@ export default function BillDetailPage() {
       cancelled: 'Cancelled'
     };
     return labels[status] || status;
+  };
+
+  const getStatusIndex = (status: string) => {
+    if (status === 'counter_received') return 4;
+    const index = STATUS_STEPS.findIndex(s => s.key === status);
+    return index >= 0 ? index : 0;
   };
 
   const analyzeBill = async () => {
@@ -504,6 +521,68 @@ export default function BillDetailPage() {
               </button>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Status Progression Bar */}
+      <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '24px', marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#64748b', marginBottom: '20px', textTransform: 'uppercase' }}>Workflow Status</h3>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
+          {/* Progress Line */}
+          <div style={{
+            position: 'absolute',
+            top: '20px',
+            left: '40px',
+            right: '40px',
+            height: '4px',
+            background: '#e2e8f0',
+            borderRadius: '2px',
+            zIndex: 0
+          }}>
+            <div style={{
+              height: '100%',
+              width: `${(getStatusIndex(bill.status) / (STATUS_STEPS.length - 1)) * 100}%`,
+              background: 'linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%)',
+              borderRadius: '2px',
+              transition: 'width 0.3s ease'
+            }} />
+          </div>
+          
+          {STATUS_STEPS.map((step, index) => {
+            const currentIndex = getStatusIndex(bill.status);
+            const isComplete = index < currentIndex;
+            const isCurrent = index === currentIndex;
+            const isPending = index > currentIndex;
+            
+            return (
+              <div key={step.key} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 1 }}>
+                <div style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '18px',
+                  background: isComplete ? 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' :
+                              isCurrent ? 'white' : '#f1f5f9',
+                  border: isCurrent ? '3px solid #6366f1' : 'none',
+                  boxShadow: isCurrent ? '0 0 0 4px rgba(99, 102, 241, 0.2)' : 'none',
+                  color: isComplete ? 'white' : 'inherit'
+                }}>
+                  {isComplete ? '✓' : step.icon}
+                </div>
+                <span style={{
+                  marginTop: '8px',
+                  fontSize: '12px',
+                  fontWeight: isCurrent ? 600 : 400,
+                  color: isCurrent ? '#6366f1' : isPending ? '#94a3b8' : '#0f172a'
+                }}>
+                  {step.label}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 

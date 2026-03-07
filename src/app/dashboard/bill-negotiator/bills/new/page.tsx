@@ -272,7 +272,9 @@ export default function NewBillPage() {
       }
       
       const data = await res.json();
-      router.push(`/dashboard/bill-negotiator/bills/${data.id}`);
+      const billId = data.bill?.id || data.id;
+      console.log('Created bill:', data);
+      router.push(`/dashboard/bill-negotiator/bills/${billId}`);
     } catch (error) {
       console.error('Error creating bill:', error);
       alert(error instanceof Error ? error.message : 'Failed to create bill');

@@ -101,10 +101,30 @@ export async function POST() {
       CREATE INDEX IF NOT EXISTS idx_rule_exec_client ON rule_executions(client_id);
     `);
     
+    // Add response timing columns (for human-like delays)
+    const timingColumns = [
+      { name: 'response_delay_mode', type: "VARCHAR(20) DEFAULT 'natural'" },
+      { name: 'response_delay_min_minutes', type: 'INTEGER DEFAULT 60' },
+      { name: 'response_delay_max_minutes', type: 'INTEGER DEFAULT 240' },
+      { name: 'response_business_hours_only', type: 'BOOLEAN DEFAULT true' },
+      { name: 'response_weekdays_only', type: 'BOOLEAN DEFAULT false' },
+    ];
+    
+    for (const col of timingColumns) {
+      try {
+        await pool.query(`
+          ALTER TABLE negotiation_settings ADD COLUMN IF NOT EXISTS ${col.name} ${col.type}
+        `);
+      } catch (e) {
+        // Column might already exist
+      }
+    }
+    
     return NextResponse.json({
       success: true,
-      message: 'Rules engine tables created successfully',
-      tables: ['negotiation_settings', 'negotiation_rules', 'rule_executions']
+      message: 'Rules engine tables created successfully with response timing columns',
+      tables: ['negotiation_settings', 'negotiation_rules', 'rule_executions'],
+      timing_columns: timingColumns.map(c => c.name)
     });
     
   } catch (error: any) {

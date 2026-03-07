@@ -42,10 +42,12 @@ export class RulesEngine {
         default_initial_offer_percent, max_offer_percent, min_offer_percent,
         auto_accept_threshold, max_negotiation_rounds, counter_increment_percent,
         days_to_respond, days_before_followup, days_before_escalation,
+        response_delay_mode, response_delay_min_minutes, response_delay_max_minutes,
+        response_business_hours_only, response_weekdays_only,
         auto_send_method, require_fax_confirmation,
         notify_on_new_bill, notify_on_response, notify_on_settlement, notify_on_escalation,
         notification_emails, updated_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, NOW())
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, NOW())
       ON CONFLICT (client_id) DO UPDATE SET
         autonomy_level = EXCLUDED.autonomy_level,
         default_initial_offer_percent = EXCLUDED.default_initial_offer_percent,
@@ -57,6 +59,11 @@ export class RulesEngine {
         days_to_respond = EXCLUDED.days_to_respond,
         days_before_followup = EXCLUDED.days_before_followup,
         days_before_escalation = EXCLUDED.days_before_escalation,
+        response_delay_mode = EXCLUDED.response_delay_mode,
+        response_delay_min_minutes = EXCLUDED.response_delay_min_minutes,
+        response_delay_max_minutes = EXCLUDED.response_delay_max_minutes,
+        response_business_hours_only = EXCLUDED.response_business_hours_only,
+        response_weekdays_only = EXCLUDED.response_weekdays_only,
         auto_send_method = EXCLUDED.auto_send_method,
         require_fax_confirmation = EXCLUDED.require_fax_confirmation,
         notify_on_new_bill = EXCLUDED.notify_on_new_bill,
@@ -70,6 +77,8 @@ export class RulesEngine {
       merged.default_initial_offer_percent, merged.max_offer_percent, merged.min_offer_percent,
       merged.auto_accept_threshold, merged.max_negotiation_rounds, merged.counter_increment_percent,
       merged.days_to_respond, merged.days_before_followup, merged.days_before_escalation,
+      merged.response_delay_mode, merged.response_delay_min_minutes, merged.response_delay_max_minutes,
+      merged.response_business_hours_only, merged.response_weekdays_only,
       merged.auto_send_method, merged.require_fax_confirmation,
       merged.notify_on_new_bill, merged.notify_on_response, merged.notify_on_settlement, merged.notify_on_escalation,
       JSON.stringify(merged.notification_emails)

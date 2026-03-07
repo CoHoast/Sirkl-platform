@@ -22,6 +22,12 @@ interface NegotiationSettings {
   notify_on_settlement: boolean;
   notify_on_escalation: boolean;
   notification_emails: string[];
+  // Response timing settings (to appear more human)
+  response_delay_mode: 'instant' | 'quick' | 'natural' | 'deliberate' | 'custom';
+  response_delay_min_minutes: number;
+  response_delay_max_minutes: number;
+  response_business_hours_only: boolean;
+  response_weekdays_only: boolean;
 }
 
 interface AutomationSettingsProps {
@@ -394,9 +400,130 @@ export function AutomationSettings({ clientId, onSave }: AutomationSettingsProps
         </div>
       </div>
 
+      {/* Response Timing - Human-like delays */}
+      <div style={styles.section}>
+        <h3 style={styles.sectionTitle}>🕐 Response Timing</h3>
+        <div style={{
+          background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+          border: '1px solid #fcd34d',
+          borderRadius: '8px',
+          padding: '12px 16px',
+          marginBottom: '16px',
+          fontSize: '13px',
+          color: '#92400e'
+        }}>
+          💡 <strong>Pro tip:</strong> Instant responses signal "bot" to providers. Adding natural delays increases settlement rates by making negotiations feel human.
+        </div>
+        <div style={styles.card}>
+          <div style={styles.field}>
+            <label style={styles.label}>Response Delay Mode</label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px', marginTop: '8px' }}>
+              {[
+                { value: 'instant', label: '⚡ Instant', desc: '< 1 min (testing only)' },
+                { value: 'quick', label: '🏃 Quick', desc: '15-30 minutes' },
+                { value: 'natural', label: '🧑 Natural', desc: '1-4 hours (random)' },
+                { value: 'deliberate', label: '🤔 Deliberate', desc: '4-24 hours' },
+                { value: 'custom', label: '⚙️ Custom', desc: 'Set your own' },
+              ].map(({ value, label, desc }) => (
+                <div
+                  key={value}
+                  onClick={() => {
+                    updateSetting('response_delay_mode', value as any);
+                    // Set defaults based on mode
+                    if (value === 'instant') {
+                      updateSetting('response_delay_min_minutes', 0);
+                      updateSetting('response_delay_max_minutes', 1);
+                    } else if (value === 'quick') {
+                      updateSetting('response_delay_min_minutes', 15);
+                      updateSetting('response_delay_max_minutes', 30);
+                    } else if (value === 'natural') {
+                      updateSetting('response_delay_min_minutes', 60);
+                      updateSetting('response_delay_max_minutes', 240);
+                    } else if (value === 'deliberate') {
+                      updateSetting('response_delay_min_minutes', 240);
+                      updateSetting('response_delay_max_minutes', 1440);
+                    }
+                  }}
+                  style={{
+                    padding: '14px 12px',
+                    border: settings.response_delay_mode === value ? '2px solid #8B5CF6' : '1px solid #e2e8f0',
+                    borderRadius: '10px',
+                    background: settings.response_delay_mode === value ? 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)' : '#fff',
+                    cursor: 'pointer',
+                    textAlign: 'center',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <div style={{ fontWeight: '600', color: '#0f172a', marginBottom: '4px' }}>{label}</div>
+                  <div style={{ fontSize: '11px', color: '#64748b' }}>{desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Custom timing inputs - only show if custom mode */}
+          {settings.response_delay_mode === 'custom' && (
+            <div style={{ ...styles.row, marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #e2e8f0' }}>
+              <div style={styles.field}>
+                <label style={styles.label}>Minimum Delay (minutes)</label>
+                <input
+                  type="number"
+                  style={styles.input}
+                  value={settings.response_delay_min_minutes}
+                  onChange={e => updateSetting('response_delay_min_minutes', parseInt(e.target.value) || 0)}
+                  min={0}
+                />
+                <div style={styles.hint}>At least this long before responding</div>
+              </div>
+              <div style={styles.field}>
+                <label style={styles.label}>Maximum Delay (minutes)</label>
+                <input
+                  type="number"
+                  style={styles.input}
+                  value={settings.response_delay_max_minutes}
+                  onChange={e => updateSetting('response_delay_max_minutes', parseInt(e.target.value) || 0)}
+                  min={0}
+                />
+                <div style={styles.hint}>No longer than this (randomized within range)</div>
+              </div>
+            </div>
+          )}
+          
+          {/* Business hours and weekday toggles */}
+          <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={styles.toggle(settings.response_business_hours_only)}
+                  onClick={() => updateSetting('response_business_hours_only', !settings.response_business_hours_only)}
+                >
+                  <div style={styles.toggleKnob(settings.response_business_hours_only)} />
+                </div>
+                <div>
+                  <span style={{ fontSize: '14px', color: '#374151', fontWeight: 500 }}>Business hours only</span>
+                  <div style={{ fontSize: '12px', color: '#64748b' }}>Only send between 8am - 6pm provider's time zone</div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={styles.toggle(settings.response_weekdays_only)}
+                  onClick={() => updateSetting('response_weekdays_only', !settings.response_weekdays_only)}
+                >
+                  <div style={styles.toggleKnob(settings.response_weekdays_only)} />
+                </div>
+                <div>
+                  <span style={{ fontSize: '14px', color: '#374151', fontWeight: 500 }}>Weekdays only</span>
+                  <div style={{ fontSize: '12px', color: '#64748b' }}>No responses on Saturday or Sunday</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Timing */}
       <div style={styles.section}>
-        <h3 style={styles.sectionTitle}>⏱️ Timing</h3>
+        <h3 style={styles.sectionTitle}>⏱️ Deadlines & Follow-ups</h3>
         <div style={styles.card}>
           <div style={styles.row}>
             <div style={styles.field}>

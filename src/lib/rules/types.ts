@@ -67,6 +67,9 @@ export interface NegotiationRule {
   created_by?: string;
 }
 
+// Response delay modes for human-like behavior
+export type ResponseDelayMode = 'instant' | 'quick' | 'natural' | 'deliberate' | 'custom';
+
 // Client-level negotiation settings
 export interface NegotiationSettings {
   client_id: number;
@@ -88,6 +91,13 @@ export interface NegotiationSettings {
   days_to_respond: number;                // Response deadline in offer letters
   days_before_followup: number;           // Send reminder after N days
   days_before_escalation: number;         // Escalate to human after N days
+  
+  // Response timing (human-like delays)
+  response_delay_mode: ResponseDelayMode;
+  response_delay_min_minutes: number;     // Minimum delay before auto-responses
+  response_delay_max_minutes: number;     // Maximum delay (randomized within range)
+  response_business_hours_only: boolean;  // Only send during 8am-6pm
+  response_weekdays_only: boolean;        // No responses on weekends
   
   // Auto-send settings
   auto_send_method: 'fax' | 'email' | 'both' | 'none';
@@ -120,6 +130,13 @@ export const DEFAULT_NEGOTIATION_SETTINGS: Omit<NegotiationSettings, 'client_id'
   days_to_respond: 14,
   days_before_followup: 7,
   days_before_escalation: 21,
+  
+  // Response timing defaults - 'natural' feels most human
+  response_delay_mode: 'natural',
+  response_delay_min_minutes: 60,      // At least 1 hour
+  response_delay_max_minutes: 240,     // Up to 4 hours
+  response_business_hours_only: true,  // Only send during business hours
+  response_weekdays_only: false,       // Allow weekend responses by default
   
   auto_send_method: 'none',
   require_fax_confirmation: true,

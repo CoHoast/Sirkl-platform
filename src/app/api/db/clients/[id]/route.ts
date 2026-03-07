@@ -69,6 +69,7 @@ export async function PUT(
       dashboardType,
       customDashboardUrl,
       statsApiEndpoint,
+      statsApiKey,
       products,
       branding
     } = body;
@@ -111,6 +112,10 @@ export async function PUT(
       values.push(statsApiEndpoint);
       // Reset connection status when endpoint changes
       updates.push(`connection_status = 'pending'`);
+    }
+    if (statsApiKey !== undefined) {
+      updates.push(`stats_api_key = $${paramCount++}`);
+      values.push(statsApiKey);
     }
     if (products !== undefined) {
       updates.push(`products = $${paramCount++}`);

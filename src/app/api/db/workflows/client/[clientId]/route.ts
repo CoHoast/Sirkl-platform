@@ -17,7 +17,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     // Get client info
     const clientResult = await pool.query(
-      'SELECT id, name, tier FROM clients WHERE id = $1',
+      'SELECT id, name FROM clients WHERE id = $1',
       [clientId]
     );
     

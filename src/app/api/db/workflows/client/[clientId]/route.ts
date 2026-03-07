@@ -79,7 +79,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   } catch (error) {
     console.error('Error fetching client workflows:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch workflows' },
+      { 
+        error: 'Failed to fetch workflows',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }
@@ -163,7 +166,10 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     await dbClient.query('ROLLBACK');
     console.error('Error updating workflows:', error);
     return NextResponse.json(
-      { error: 'Failed to update workflows' },
+      { 
+        error: 'Failed to update workflows',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   } finally {

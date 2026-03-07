@@ -1,11 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import {
-  Upload, Server, Cloud, Mail, Webhook, FolderUp, Box, HardDrive,
-  Plus, Settings, Trash2, Play, Pause, RefreshCw, CheckCircle, XCircle,
-  Clock, AlertCircle, ChevronDown, ChevronUp, ExternalLink
-} from 'lucide-react';
 
 interface IntakeSource {
   id: number;
@@ -16,14 +11,11 @@ interface IntakeSource {
   description: string | null;
   config: Record<string, unknown>;
   schedule: string | null;
-  schedule_cron: string | null;
   enabled: boolean;
   last_poll_at: string | null;
   last_poll_status: string | null;
   last_poll_message: string | null;
-  last_poll_files_count: number;
   source_type_name: string;
-  source_type_description: string;
   source_type_icon: string;
   supports_schedule: boolean;
   supports_test: boolean;
@@ -55,17 +47,6 @@ interface IntakeSourcesManagerProps {
   workflowName: string;
 }
 
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  upload: Upload,
-  'folder-up': FolderUp,
-  server: Server,
-  cloud: Cloud,
-  mail: Mail,
-  webhook: Webhook,
-  box: Box,
-  'hard-drive': HardDrive,
-};
-
 const scheduleOptions = [
   { value: '', label: 'No Schedule (Manual Only)' },
   { value: 'every_5m', label: 'Every 5 minutes' },
@@ -74,7 +55,6 @@ const scheduleOptions = [
   { value: 'hourly', label: 'Every hour' },
   { value: 'every_4h', label: 'Every 4 hours' },
   { value: 'daily', label: 'Once daily (midnight)' },
-  { value: 'daily_9am', label: 'Once daily (9 AM)' },
 ];
 
 export default function IntakeSourcesManager({ clientId, workflowKey, workflowName }: IntakeSourcesManagerProps) {
@@ -82,10 +62,7 @@ export default function IntakeSourcesManager({ clientId, workflowKey, workflowNa
   const [sourceTypes, setSourceTypes] = useState<SourceType[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [editingSource, setEditingSource] = useState<IntakeSource | null>(null);
-  const [expandedSource, setExpandedSource] = useState<number | null>(null);
   const [testingSource, setTestingSource] = useState<number | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const fetchSources = useCallback(async () => {
     try {
@@ -131,9 +108,7 @@ export default function IntakeSourcesManager({ clientId, workflowKey, workflowNa
   };
 
   const handleDeleteSource = async (source: IntakeSource) => {
-    if (!confirm(`Are you sure you want to delete "${source.name}"? This cannot be undone.`)) {
-      return;
-    }
+    if (!confirm(`Are you sure you want to delete "${source.name}"?`)) return;
     try {
       const res = await fetch(`/api/db/intake-sources/${source.id}`, { method: 'DELETE' });
       if (res.ok) {
@@ -152,7 +127,7 @@ export default function IntakeSourcesManager({ clientId, workflowKey, workflowNa
       alert(data.success ? `✅ ${data.message}` : `❌ ${data.message || data.error}`);
       fetchSources();
     } catch (err) {
-      alert('Test failed: ' + (err instanceof Error ? err.message : 'Unknown error'));
+      alert('Test failed');
     } finally {
       setTestingSource(null);
     }
@@ -160,183 +135,178 @@ export default function IntakeSourcesManager({ clientId, workflowKey, workflowNa
 
   const getStatusBadge = (source: IntakeSource) => {
     if (!source.last_poll_status) {
-      return <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600">Never Run</span>;
+      return <span style={{ padding: '2px 8px', fontSize: '11px', borderRadius: '4px', background: '#f1f5f9', color: '#64748b' }}>Never Run</span>;
     }
-    const statusColors: Record<string, string> = {
-      success: 'bg-green-100 text-green-700',
-      test_success: 'bg-green-100 text-green-700',
-      failed: 'bg-red-100 text-red-700',
-      test_failed: 'bg-red-100 text-red-700',
-      running: 'bg-blue-100 text-blue-700',
-    };
+    const isSuccess = source.last_poll_status.includes('success');
     return (
-      <span className={`px-2 py-1 text-xs rounded-full ${statusColors[source.last_poll_status] || 'bg-gray-100 text-gray-600'}`}>
+      <span style={{ 
+        padding: '2px 8px', 
+        fontSize: '11px', 
+        borderRadius: '4px', 
+        background: isSuccess ? '#dcfce7' : '#fee2e2', 
+        color: isSuccess ? '#16a34a' : '#dc2626' 
+      }}>
         {source.last_poll_status.replace('_', ' ')}
       </span>
     );
   };
 
-  const getIcon = (iconName: string) => {
-    const IconComponent = iconMap[iconName] || Server;
-    return <IconComponent className="w-5 h-5" />;
-  };
-
   if (loading) {
     return (
-      <div className="p-6 bg-white rounded-lg border border-gray-200">
-        <div className="animate-pulse flex items-center gap-3">
-          <div className="w-6 h-6 bg-gray-200 rounded"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-        </div>
+      <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '24px' }}>
+        <p style={{ color: '#64748b' }}>Loading intake sources...</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-      {/* Header */}
-      <div className="p-4 border-b border-gray-200 bg-gray-50">
-        <div className="flex items-center justify-between">
+    <>
+      <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+        {/* Header */}
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid #e2e8f0', background: '#fafafa', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-              <Upload className="w-5 h-5 text-violet-600" />
+            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <svg width="20" height="20" fill="none" stroke="#6366f1" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              </svg>
               Intake Sources
             </h3>
-            <p className="text-sm text-gray-500 mt-1">
+            <p style={{ fontSize: '13px', color: '#64748b', marginTop: '4px' }}>
               Configure how documents are ingested for {workflowName}
             </p>
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 20px',
+              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontWeight: 600,
+              fontSize: '14px',
+              cursor: 'pointer'
+            }}
           >
-            <Plus className="w-4 h-4" />
+            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M12 4v16m8-8H4"/>
+            </svg>
             Add Source
           </button>
         </div>
-      </div>
 
-      {/* Sources List */}
-      <div className="divide-y divide-gray-100">
-        {sources.length === 0 ? (
-          <div className="p-8 text-center">
-            <Upload className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500">No intake sources configured</p>
-            <p className="text-sm text-gray-400 mt-1">Add a source to start receiving documents</p>
-          </div>
-        ) : (
-          sources.map(source => (
-            <div key={source.id} className="p-4 hover:bg-gray-50 transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${source.enabled ? 'bg-violet-100 text-violet-600' : 'bg-gray-100 text-gray-400'}`}>
-                    {getIcon(source.source_type_icon)}
+        {/* Sources List */}
+        <div>
+          {sources.length === 0 ? (
+            <div style={{ padding: '48px', textAlign: 'center' }}>
+              <svg width="48" height="48" fill="none" stroke="#cbd5e1" strokeWidth="1.5" viewBox="0 0 24 24" style={{ margin: '0 auto 12px' }}>
+                <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              </svg>
+              <p style={{ color: '#64748b', fontSize: '15px' }}>No intake sources configured</p>
+              <p style={{ color: '#94a3b8', fontSize: '13px', marginTop: '4px' }}>Add a source to start receiving documents</p>
+            </div>
+          ) : (
+            sources.map((source, index) => (
+              <div 
+                key={source.id} 
+                style={{ 
+                  padding: '16px 24px', 
+                  borderBottom: index < sources.length - 1 ? '1px solid #f1f5f9' : 'none',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ 
+                    width: 40, 
+                    height: 40, 
+                    borderRadius: '10px', 
+                    background: source.enabled ? '#eef2ff' : '#f1f5f9',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <svg width="20" height="20" fill="none" stroke={source.enabled ? '#6366f1' : '#94a3b8'} strokeWidth="2" viewBox="0 0 24 24">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-gray-900">{source.name}</span>
-                      <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontWeight: 500, color: '#0f172a', fontSize: '14px' }}>{source.name}</span>
+                      <span style={{ fontSize: '11px', color: '#64748b', background: '#f1f5f9', padding: '2px 8px', borderRadius: '4px' }}>
                         {source.source_type_name}
                       </span>
                       {getStatusBadge(source)}
                     </div>
                     {source.description && (
-                      <p className="text-sm text-gray-500 mt-0.5">{source.description}</p>
-                    )}
-                    {source.schedule && (
-                      <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {scheduleOptions.find(s => s.value === source.schedule)?.label || source.schedule}
-                      </p>
+                      <p style={{ fontSize: '13px', color: '#64748b', marginTop: '2px' }}>{source.description}</p>
                     )}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   {source.supports_test && (
                     <button
                       onClick={() => handleTestConnection(source)}
                       disabled={testingSource === source.id}
-                      className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50"
+                      style={{
+                        padding: '8px',
+                        background: 'none',
+                        border: 'none',
+                        cursor: testingSource === source.id ? 'wait' : 'pointer',
+                        color: '#64748b'
+                      }}
                       title="Test Connection"
                     >
-                      {testingSource === source.id ? (
-                        <RefreshCw className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Play className="w-4 h-4" />
-                      )}
+                      <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                        <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
                     </button>
                   )}
                   <button
-                    onClick={() => setExpandedSource(expandedSource === source.id ? null : source.id)}
-                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                    title="Configure"
-                  >
-                    <Settings className="w-4 h-4" />
-                  </button>
-                  <button
                     onClick={() => handleToggleSource(source)}
-                    className={`p-2 rounded-lg transition-colors ${
-                      source.enabled 
-                        ? 'text-green-600 hover:bg-green-50' 
-                        : 'text-gray-400 hover:bg-gray-100'
-                    }`}
+                    style={{
+                      padding: '8px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: source.enabled ? '#16a34a' : '#94a3b8'
+                    }}
                     title={source.enabled ? 'Disable' : 'Enable'}
                   >
-                    {source.enabled ? <CheckCircle className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
+                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      {source.enabled ? (
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      ) : (
+                        <path d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      )}
+                    </svg>
                   </button>
                   <button
                     onClick={() => handleDeleteSource(source)}
-                    className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    style={{
+                      padding: '8px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: '#94a3b8'
+                    }}
                     title="Delete"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
                   </button>
                 </div>
               </div>
-
-              {/* Expanded Config View */}
-              {expandedSource === source.id && (
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-500">Source Type:</span>
-                      <span className="ml-2 text-gray-900">{source.source_type_name}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Last Run:</span>
-                      <span className="ml-2 text-gray-900">
-                        {source.last_poll_at 
-                          ? new Date(source.last_poll_at).toLocaleString()
-                          : 'Never'}
-                      </span>
-                    </div>
-                    {source.last_poll_message && (
-                      <div className="col-span-2">
-                        <span className="text-gray-500">Last Message:</span>
-                        <span className="ml-2 text-gray-900">{source.last_poll_message}</span>
-                      </div>
-                    )}
-                    <div className="col-span-2">
-                      <span className="text-gray-500">Configuration:</span>
-                      <pre className="mt-2 p-3 bg-gray-50 rounded-lg text-xs overflow-x-auto">
-                        {JSON.stringify(source.config, null, 2)}
-                      </pre>
-                    </div>
-                  </div>
-                  <div className="mt-4 flex justify-end">
-                    <button
-                      onClick={() => setEditingSource(source)}
-                      className="px-3 py-1.5 text-sm text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
-                    >
-                      Edit Configuration
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))
-        )}
+            ))
+          )}
+        </div>
       </div>
 
       {/* Add Source Modal */}
@@ -352,24 +322,10 @@ export default function IntakeSourcesManager({ clientId, workflowKey, workflowNa
           }}
         />
       )}
-
-      {/* Edit Source Modal */}
-      {editingSource && (
-        <EditSourceModal
-          source={editingSource}
-          sourceTypes={sourceTypes}
-          onClose={() => setEditingSource(null)}
-          onSuccess={() => {
-            setEditingSource(null);
-            fetchSources();
-          }}
-        />
-      )}
-    </div>
+    </>
   );
 }
 
-// Add Source Modal Component
 function AddSourceModal({
   clientId,
   workflowKey,
@@ -394,7 +350,6 @@ function AddSourceModal({
 
   const handleSelectType = (type: SourceType) => {
     setSelectedType(type);
-    // Initialize form data with defaults
     const defaults: Record<string, unknown> = {};
     type.config_schema.fields.forEach(field => {
       if (field.default !== undefined) {
@@ -402,7 +357,7 @@ function AddSourceModal({
       }
     });
     setFormData(defaults);
-    setName(`${type.name} - ${workflowKey}`);
+    setName(`${type.name}`);
     setStep('configure');
   };
 
@@ -435,172 +390,142 @@ function AddSourceModal({
         setError(data.error || 'Failed to create source');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create source');
+      setError('Failed to create source');
     } finally {
       setSaving(false);
     }
   };
 
-  const renderConfigField = (field: { key: string; label: string; type: string; required?: boolean; options?: string[]; readonly?: boolean }) => {
-    const value = formData[field.key] ?? '';
-
-    switch (field.type) {
-      case 'select':
-        return (
-          <select
-            value={value as string}
-            onChange={e => setFormData({ ...formData, [field.key]: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
-            required={field.required}
-          >
-            <option value="">Select...</option>
-            {field.options?.map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
-        );
-      case 'boolean':
-        return (
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={value as boolean}
-              onChange={e => setFormData({ ...formData, [field.key]: e.target.checked })}
-              className="w-4 h-4 text-violet-600 rounded focus:ring-violet-500"
-            />
-            <span className="text-sm text-gray-600">Enable</span>
-          </label>
-        );
-      case 'number':
-        return (
-          <input
-            type="number"
-            value={value as number}
-            onChange={e => setFormData({ ...formData, [field.key]: parseInt(e.target.value) || 0 })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
-            required={field.required}
-          />
-        );
-      case 'password':
-        return (
-          <input
-            type="password"
-            value={value as string}
-            onChange={e => setFormData({ ...formData, [field.key]: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
-            required={field.required}
-            readOnly={field.readonly}
-          />
-        );
-      case 'textarea':
-        return (
-          <textarea
-            value={value as string}
-            onChange={e => setFormData({ ...formData, [field.key]: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
-            rows={4}
-            required={field.required}
-            readOnly={field.readonly}
-          />
-        );
-      case 'array':
-        return (
-          <input
-            type="text"
-            value={Array.isArray(value) ? value.join(', ') : ''}
-            onChange={e => setFormData({ ...formData, [field.key]: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
-            placeholder="Enter comma-separated values"
-          />
-        );
-      default:
-        return (
-          <input
-            type="text"
-            value={value as string}
-            onChange={e => setFormData({ ...formData, [field.key]: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
-            required={field.required}
-            readOnly={field.readonly}
-          />
-        );
-    }
-  };
-
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      background: 'rgba(0,0,0,0.5)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 9999,
+      padding: '20px'
+    }}>
+      <div style={{
+        background: 'white',
+        borderRadius: '16px',
+        width: '100%',
+        maxWidth: '600px',
+        maxHeight: '90vh',
+        overflow: 'auto',
+        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
+      }}>
+        {/* Modal Header */}
+        <div style={{ padding: '24px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#0f172a' }}>
             {step === 'select' ? 'Add Intake Source' : `Configure ${selectedType?.name}`}
           </h2>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px' }}>
+            <svg width="20" height="20" fill="none" stroke="#64748b" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
         </div>
 
-        <div className="p-6">
+        {/* Modal Content */}
+        <div style={{ padding: '24px' }}>
           {step === 'select' ? (
-            <div className="grid grid-cols-2 gap-4">
-              {sourceTypes.map(type => {
-                const IconComponent = iconMap[type.icon] || Server;
-                return (
-                  <button
-                    key={type.type_key}
-                    onClick={() => handleSelectType(type)}
-                    className="p-4 border border-gray-200 rounded-lg hover:border-violet-300 hover:bg-violet-50 transition-colors text-left"
-                  >
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="p-2 bg-violet-100 rounded-lg text-violet-600">
-                        <IconComponent className="w-5 h-5" />
-                      </div>
-                      <span className="font-medium text-gray-900">{type.name}</span>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+              {sourceTypes.map(type => (
+                <button
+                  key={type.type_key}
+                  onClick={() => handleSelectType(type)}
+                  style={{
+                    padding: '20px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '12px',
+                    background: 'white',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.15s'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.borderColor = '#6366f1';
+                    e.currentTarget.style.background = '#fafafa';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.borderColor = '#e2e8f0';
+                    e.currentTarget.style.background = 'white';
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                    <div style={{ width: 36, height: 36, borderRadius: '8px', background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="18" height="18" fill="none" stroke="#6366f1" strokeWidth="2" viewBox="0 0 24 24">
+                        <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                      </svg>
                     </div>
-                    <p className="text-sm text-gray-500">{type.description}</p>
-                  </button>
-                );
-              })}
+                    <span style={{ fontWeight: 600, color: '#0f172a', fontSize: '14px' }}>{type.name}</span>
+                  </div>
+                  <p style={{ fontSize: '13px', color: '#64748b' }}>{type.description}</p>
+                </button>
+              ))}
             </div>
           ) : selectedType && (
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                <div style={{ padding: '12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', color: '#dc2626', fontSize: '14px' }}>
                   {error}
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
                   Source Name *
                 </label>
                 <input
                   type="text"
                   value={name}
                   onChange={e => setName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
-                  required
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px'
+                  }}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
                   Description
                 </label>
                 <input
                   type="text"
                   value={description}
                   onChange={e => setDescription(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
                   placeholder="Optional description"
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    fontSize: '14px'
+                  }}
                 />
               </div>
 
               {selectedType.supports_schedule && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
                     Schedule
                   </label>
                   <select
                     value={schedule}
                     onChange={e => setSchedule(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: '8px',
+                      fontSize: '14px'
+                    }}
                   >
                     {scheduleOptions.map(opt => (
                       <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -610,15 +535,69 @@ function AddSourceModal({
               )}
 
               {selectedType.config_schema.fields.length > 0 && (
-                <div className="pt-4 border-t border-gray-200">
-                  <h4 className="font-medium text-gray-900 mb-3">Configuration</h4>
-                  <div className="space-y-4">
+                <div style={{ paddingTop: '16px', borderTop: '1px solid #e2e8f0' }}>
+                  <h4 style={{ fontWeight: 600, color: '#0f172a', marginBottom: '16px' }}>Configuration</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     {selectedType.config_schema.fields.map(field => (
                       <div key={field.key}>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
                           {field.label} {field.required && '*'}
                         </label>
-                        {renderConfigField(field)}
+                        {field.type === 'select' ? (
+                          <select
+                            value={(formData[field.key] as string) || ''}
+                            onChange={e => setFormData({ ...formData, [field.key]: e.target.value })}
+                            style={{
+                              width: '100%',
+                              padding: '10px 14px',
+                              border: '1px solid #e2e8f0',
+                              borderRadius: '8px',
+                              fontSize: '14px'
+                            }}
+                          >
+                            <option value="">Select...</option>
+                            {field.options?.map(opt => (
+                              <option key={opt} value={opt}>{opt}</option>
+                            ))}
+                          </select>
+                        ) : field.type === 'boolean' ? (
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <input
+                              type="checkbox"
+                              checked={formData[field.key] as boolean || false}
+                              onChange={e => setFormData({ ...formData, [field.key]: e.target.checked })}
+                            />
+                            <span style={{ fontSize: '14px', color: '#64748b' }}>Enable</span>
+                          </label>
+                        ) : field.type === 'textarea' ? (
+                          <textarea
+                            value={(formData[field.key] as string) || ''}
+                            onChange={e => setFormData({ ...formData, [field.key]: e.target.value })}
+                            rows={4}
+                            style={{
+                              width: '100%',
+                              padding: '10px 14px',
+                              border: '1px solid #e2e8f0',
+                              borderRadius: '8px',
+                              fontSize: '14px'
+                            }}
+                          />
+                        ) : (
+                          <input
+                            type={field.type === 'password' ? 'password' : field.type === 'number' ? 'number' : 'text'}
+                            value={(formData[field.key] as string) || ''}
+                            onChange={e => setFormData({ ...formData, [field.key]: field.type === 'number' ? parseInt(e.target.value) || 0 : e.target.value })}
+                            readOnly={field.readonly}
+                            style={{
+                              width: '100%',
+                              padding: '10px 14px',
+                              border: '1px solid #e2e8f0',
+                              borderRadius: '8px',
+                              fontSize: '14px',
+                              background: field.readonly ? '#f9fafb' : 'white'
+                            }}
+                          />
+                        )}
                       </div>
                     ))}
                   </div>
@@ -628,19 +607,20 @@ function AddSourceModal({
           )}
         </div>
 
-        <div className="p-6 border-t border-gray-200 flex justify-between">
+        {/* Modal Footer */}
+        <div style={{ padding: '20px 24px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between' }}>
           {step === 'configure' && (
             <button
               onClick={() => setStep('select')}
-              className="px-4 py-2 text-gray-600 hover:text-gray-900"
+              style={{ padding: '10px 20px', background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '14px' }}
             >
               ← Back
             </button>
           )}
-          <div className="flex gap-3 ml-auto">
+          <div style={{ display: 'flex', gap: '12px', marginLeft: 'auto' }}>
             <button
               onClick={onClose}
-              className="px-4 py-2 text-gray-600 hover:text-gray-900"
+              style={{ padding: '10px 20px', background: 'none', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#64748b', cursor: 'pointer', fontSize: '14px' }}
             >
               Cancel
             </button>
@@ -648,142 +628,21 @@ function AddSourceModal({
               <button
                 onClick={handleSave}
                 disabled={saving || !name}
-                className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50"
+                style={{
+                  padding: '10px 24px',
+                  background: saving || !name ? '#94a3b8' : 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  color: 'white',
+                  fontWeight: 600,
+                  fontSize: '14px',
+                  cursor: saving || !name ? 'not-allowed' : 'pointer'
+                }}
               >
                 {saving ? 'Creating...' : 'Create Source'}
               </button>
             )}
           </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Edit Source Modal (simplified version)
-function EditSourceModal({
-  source,
-  sourceTypes,
-  onClose,
-  onSuccess
-}: {
-  source: IntakeSource;
-  sourceTypes: SourceType[];
-  onClose: () => void;
-  onSuccess: () => void;
-}) {
-  const sourceType = sourceTypes.find(t => t.type_key === source.source_type);
-  const [formData, setFormData] = useState<Record<string, unknown>>(source.config);
-  const [name, setName] = useState(source.name);
-  const [description, setDescription] = useState(source.description || '');
-  const [schedule, setSchedule] = useState(source.schedule || '');
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleSave = async () => {
-    setSaving(true);
-    setError(null);
-
-    try {
-      const res = await fetch(`/api/db/intake-sources/${source.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          description: description || null,
-          config: formData,
-          schedule: schedule || null
-        })
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        onSuccess();
-      } else {
-        setError(data.error || 'Failed to update source');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update source');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Edit {source.name}</h2>
-        </div>
-
-        <div className="p-6 space-y-4">
-          {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-              {error}
-            </div>
-          )}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Source Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <input
-              type="text"
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
-            />
-          </div>
-
-          {sourceType?.supports_schedule && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Schedule</label>
-              <select
-                value={schedule}
-                onChange={e => setSchedule(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500"
-              >
-                {scheduleOptions.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Configuration (JSON)</label>
-            <textarea
-              value={JSON.stringify(formData, null, 2)}
-              onChange={e => {
-                try {
-                  setFormData(JSON.parse(e.target.value));
-                } catch {}
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 font-mono text-sm"
-              rows={8}
-            />
-          </div>
-        </div>
-
-        <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2 text-gray-600 hover:text-gray-900">
-            Cancel
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50"
-          >
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
         </div>
       </div>
     </div>

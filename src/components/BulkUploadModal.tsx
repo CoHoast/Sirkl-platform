@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
-import { Upload, X, File, CheckCircle, XCircle, Loader2, FolderUp } from 'lucide-react';
 
 interface UploadResult {
   filename: string;
@@ -54,7 +53,6 @@ export default function BulkUploadModal({
   }, []);
 
   const addFiles = (newFiles: File[]) => {
-    // Filter for allowed file types
     const allowedTypes = ['application/pdf', 'image/tiff', 'image/png', 'image/jpeg', 'image/jpg'];
     const validFiles = newFiles.filter(f => 
       allowedTypes.includes(f.type) || 
@@ -66,7 +64,6 @@ export default function BulkUploadModal({
       f.name.endsWith('.jpeg')
     );
 
-    // Remove duplicates by name
     const existingNames = new Set(files.map(f => f.name));
     const uniqueNewFiles = validFiles.filter(f => !existingNames.has(f.name));
 
@@ -107,8 +104,6 @@ export default function BulkUploadModal({
 
       if (data.success) {
         setResults(data.results);
-        
-        // If all succeeded, auto-close after delay
         if (data.summary.failed === 0) {
           setTimeout(() => {
             onSuccess();
@@ -125,7 +120,7 @@ export default function BulkUploadModal({
       setResults([{
         filename: 'Upload',
         status: 'error',
-        error: error instanceof Error ? error.message : 'Upload failed'
+        error: 'Upload failed'
       }]);
     } finally {
       setUploading(false);
@@ -139,26 +134,44 @@ export default function BulkUploadModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      background: 'rgba(0,0,0,0.5)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 9999,
+      padding: '20px'
+    }}>
+      <div style={{
+        background: 'white',
+        borderRadius: '16px',
+        width: '100%',
+        maxWidth: '600px',
+        maxHeight: '90vh',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
+      }}>
         {/* Header */}
-        <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+        <div style={{ padding: '24px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Bulk Upload</h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#0f172a' }}>Bulk Upload</h2>
+            <p style={{ fontSize: '13px', color: '#64748b', marginTop: '4px' }}>
               Upload multiple files to {workflowName}
             </p>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <X className="w-5 h-5" />
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px' }}>
+            <svg width="20" height="20" fill="none" stroke="#64748b" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M6 18L18 6M6 6l12 12"/>
+            </svg>
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 flex-1 overflow-y-auto">
+        <div style={{ padding: '24px', flex: 1, overflow: 'auto' }}>
           {!results ? (
             <>
               {/* Drop Zone */}
@@ -167,13 +180,16 @@ export default function BulkUploadModal({
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
-                className={`
-                  border-2 border-dashed rounded-xl p-8 text-center transition-colors cursor-pointer
-                  ${dragActive 
-                    ? 'border-violet-500 bg-violet-50' 
-                    : 'border-gray-300 hover:border-violet-400 hover:bg-gray-50'}
-                `}
                 onClick={() => fileInputRef.current?.click()}
+                style={{
+                  border: `2px dashed ${dragActive ? '#6366f1' : '#e2e8f0'}`,
+                  borderRadius: '12px',
+                  padding: '48px',
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  background: dragActive ? '#f5f3ff' : 'white',
+                  transition: 'all 0.15s'
+                }}
               >
                 <input
                   ref={fileInputRef}
@@ -181,51 +197,65 @@ export default function BulkUploadModal({
                   multiple
                   accept=".pdf,.tiff,.tif,.png,.jpg,.jpeg"
                   onChange={handleFileSelect}
-                  className="hidden"
+                  style={{ display: 'none' }}
                 />
-                <FolderUp className={`w-12 h-12 mx-auto mb-4 ${dragActive ? 'text-violet-500' : 'text-gray-400'}`} />
-                <p className="text-lg font-medium text-gray-900 mb-2">
+                <svg width="48" height="48" fill="none" stroke={dragActive ? '#6366f1' : '#cbd5e1'} strokeWidth="1.5" viewBox="0 0 24 24" style={{ margin: '0 auto 16px' }}>
+                  <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                </svg>
+                <p style={{ fontSize: '16px', fontWeight: 500, color: '#0f172a', marginBottom: '8px' }}>
                   Drop files here or click to browse
                 </p>
-                <p className="text-sm text-gray-500">
+                <p style={{ fontSize: '13px', color: '#64748b' }}>
                   Supports PDF, TIFF, PNG, JPG files
                 </p>
               </div>
 
               {/* Selected Files */}
               {files.length > 0 && (
-                <div className="mt-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-gray-700">
+                <div style={{ marginTop: '24px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 500, color: '#374151' }}>
                       Selected Files ({files.length})
-                    </h3>
+                    </span>
                     <button
                       onClick={() => setFiles([])}
-                      className="text-sm text-red-600 hover:text-red-700"
+                      style={{ fontSize: '13px', color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer' }}
                     >
                       Clear all
                     </button>
                   </div>
-                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                  <div style={{ maxHeight: '200px', overflow: 'auto' }}>
                     {files.map((file, index) => (
                       <div
                         key={`${file.name}-${index}`}
-                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '12px',
+                          background: '#f9fafb',
+                          borderRadius: '8px',
+                          marginBottom: '8px'
+                        }}
                       >
-                        <div className="flex items-center gap-3">
-                          <File className="w-5 h-5 text-gray-400" />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <svg width="20" height="20" fill="none" stroke="#64748b" strokeWidth="2" viewBox="0 0 24 24">
+                            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                          </svg>
                           <div>
-                            <p className="text-sm font-medium text-gray-900 truncate max-w-[300px]">
+                            <p style={{ fontSize: '14px', fontWeight: 500, color: '#0f172a', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {file.name}
                             </p>
-                            <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+                            <p style={{ fontSize: '12px', color: '#64748b' }}>{formatFileSize(file.size)}</p>
                           </div>
                         </div>
                         <button
                           onClick={() => removeFile(index)}
-                          className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
                         >
-                          <X className="w-4 h-4" />
+                          <svg width="16" height="16" fill="none" stroke="#94a3b8" strokeWidth="2" viewBox="0 0 24 24">
+                            <path d="M6 18L18 6M6 6l12 12"/>
+                          </svg>
                         </button>
                       </div>
                     ))}
@@ -235,55 +265,62 @@ export default function BulkUploadModal({
             </>
           ) : (
             /* Results */
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
-                {results.every(r => r.status === 'success') ? (
-                  <>
-                    <CheckCircle className="w-8 h-8 text-green-500" />
-                    <div>
-                      <p className="font-medium text-gray-900">Upload Complete!</p>
-                      <p className="text-sm text-gray-500">
-                        {results.length} file{results.length !== 1 ? 's' : ''} uploaded successfully
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <XCircle className="w-8 h-8 text-amber-500" />
-                    <div>
-                      <p className="font-medium text-gray-900">Upload Complete with Errors</p>
-                      <p className="text-sm text-gray-500">
-                        {results.filter(r => r.status === 'success').length} succeeded, {' '}
-                        {results.filter(r => r.status === 'error').length} failed
-                      </p>
-                    </div>
-                  </>
-                )}
+            <div>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '12px', 
+                padding: '16px', 
+                background: results.every(r => r.status === 'success') ? '#f0fdf4' : '#fef2f2',
+                borderRadius: '12px',
+                marginBottom: '16px'
+              }}>
+                <svg width="32" height="32" fill="none" stroke={results.every(r => r.status === 'success') ? '#16a34a' : '#f59e0b'} strokeWidth="2" viewBox="0 0 24 24">
+                  {results.every(r => r.status === 'success') ? (
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  ) : (
+                    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                  )}
+                </svg>
+                <div>
+                  <p style={{ fontWeight: 600, color: '#0f172a' }}>
+                    {results.every(r => r.status === 'success') ? 'Upload Complete!' : 'Upload Complete with Errors'}
+                  </p>
+                  <p style={{ fontSize: '13px', color: '#64748b' }}>
+                    {results.filter(r => r.status === 'success').length} succeeded, {results.filter(r => r.status === 'error').length} failed
+                  </p>
+                </div>
               </div>
 
-              <div className="space-y-2 max-h-60 overflow-y-auto">
+              <div style={{ maxHeight: '200px', overflow: 'auto' }}>
                 {results.map((result, index) => (
                   <div
                     key={index}
-                    className={`flex items-center justify-between p-3 rounded-lg ${
-                      result.status === 'success' ? 'bg-green-50' : 'bg-red-50'
-                    }`}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '12px',
+                      background: result.status === 'success' ? '#f0fdf4' : '#fef2f2',
+                      borderRadius: '8px',
+                      marginBottom: '8px'
+                    }}
                   >
-                    <div className="flex items-center gap-3">
+                    <svg width="20" height="20" fill="none" stroke={result.status === 'success' ? '#16a34a' : '#dc2626'} strokeWidth="2" viewBox="0 0 24 24">
                       {result.status === 'success' ? (
-                        <CheckCircle className="w-5 h-5 text-green-500" />
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                       ) : (
-                        <XCircle className="w-5 h-5 text-red-500" />
+                        <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                       )}
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{result.filename}</p>
-                        {result.error && (
-                          <p className="text-xs text-red-600">{result.error}</p>
-                        )}
-                        {result.recordId && (
-                          <p className="text-xs text-green-600">Created record #{result.recordId}</p>
-                        )}
-                      </div>
+                    </svg>
+                    <div>
+                      <p style={{ fontSize: '14px', fontWeight: 500, color: '#0f172a' }}>{result.filename}</p>
+                      {result.error && (
+                        <p style={{ fontSize: '12px', color: '#dc2626' }}>{result.error}</p>
+                      )}
+                      {result.recordId && (
+                        <p style={{ fontSize: '12px', color: '#16a34a' }}>Created record #{result.recordId}</p>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -293,28 +330,44 @@ export default function BulkUploadModal({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
+        <div style={{ padding: '20px 24px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
           {!results ? (
             <>
               <button
                 onClick={onClose}
-                className="px-4 py-2 text-gray-600 hover:text-gray-900"
+                style={{ padding: '10px 20px', background: 'none', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#64748b', cursor: 'pointer', fontSize: '14px' }}
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpload}
                 disabled={files.length === 0 || uploading}
-                className="px-6 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '10px 24px',
+                  background: files.length === 0 || uploading ? '#94a3b8' : 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  color: 'white',
+                  fontWeight: 600,
+                  fontSize: '14px',
+                  cursor: files.length === 0 || uploading ? 'not-allowed' : 'pointer'
+                }}
               >
                 {uploading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ animation: 'spin 1s linear infinite' }}>
+                      <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
                     Uploading...
                   </>
                 ) : (
                   <>
-                    <Upload className="w-4 h-4" />
+                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                    </svg>
                     Upload {files.length} File{files.length !== 1 ? 's' : ''}
                   </>
                 )}
@@ -327,13 +380,22 @@ export default function BulkUploadModal({
                   setFiles([]);
                   setResults(null);
                 }}
-                className="px-4 py-2 text-gray-600 hover:text-gray-900"
+                style={{ padding: '10px 20px', background: 'none', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#64748b', cursor: 'pointer', fontSize: '14px' }}
               >
                 Upload More
               </button>
               <button
                 onClick={onSuccess}
-                className="px-6 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700"
+                style={{
+                  padding: '10px 24px',
+                  background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  color: 'white',
+                  fontWeight: 600,
+                  fontSize: '14px',
+                  cursor: 'pointer'
+                }}
               >
                 Done
               </button>

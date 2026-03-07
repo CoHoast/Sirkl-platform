@@ -1,168 +1,172 @@
 import { NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
 
-// GET single client with workflows
+// GET single client
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-    
-    // Get client details
-    const clientResult = await pool.query(`
-      SELECT * FROM clients WHERE id = $1
-    `, [id]);
+    const clientId = parseInt(id);
 
-    if (clientResult.rows.length === 0) {
+    const result = await pool.query(`
+      SELECT 
+        c.*,
+        (SELECT stats_data FROM client_stats WHERE client_id = c.id ORDER BY stat_date DESC LIMIT 1) as latest_stats
+      FROM clients c
+      WHERE c.id = $1
+    `, [clientId]);
+
+    if (result.rows.length === 0) {
       return NextResponse.json({ error: 'Client not found' }, { status: 404 });
     }
 
-    const client = clientResult.rows[0];
+    const row = result.rows[0];
+    const client = {
+      id: row.id,
+      name: row.name,
+      slug: row.slug,
+      status: row.status,
+      contactEmail: row.contact_email,
+      notes: row.notes,
+      webhookUrl: row.webhook_url,
+      dashboardType: row.dashboard_type || 'standard',
+      customDashboardUrl: row.custom_dashboard_url,
+      statsApiEndpoint: row.stats_api_endpoint,
+      lastStatsSync: row.last_stats_sync,
+      connectionStatus: row.connection_status || 'disconnected',
+      products: row.products || [],
+      branding: row.branding || {},
+      latestStats: row.latest_stats || {},
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    };
 
-    // Get client workflows
-    const workflowsResult = await pool.query(`
-      SELECT workflow_type, enabled, config 
-      FROM client_workflows 
-      WHERE client_id = $1
-    `, [id]);
-
-    // Get stats
-    const statsResult = await pool.query(`
-      SELECT 
-        (SELECT COUNT(*) FROM documents WHERE client_id = $1) as total_documents,
-        (SELECT COUNT(*) FROM documents WHERE client_id = $1 AND created_at >= CURRENT_DATE) as documents_today,
-        (SELECT COUNT(*) FROM applications WHERE client_id = $1) as total_applications,
-        (SELECT COUNT(*) FROM claims WHERE client_id = $1) as total_claims
-    `, [id]);
-
-    const stats = statsResult.rows[0] || {};
-
-    return NextResponse.json({
-      client: {
-        id: client.id,
-        name: client.name,
-        slug: client.slug,
-        status: client.status,
-        contactEmail: client.contact_email,
-        contactName: client.contact_name,
-        contactPhone: client.contact_phone,
-        addressLine1: client.address_line1,
-        addressLine2: client.address_line2,
-        city: client.city,
-        state: client.state,
-        zipCode: client.zip_code,
-        billingPlan: client.billing_plan,
-        monthlyPrice: client.monthly_price,
-        billingEmail: client.billing_email,
-        billingStartDate: client.billing_start_date,
-        webhookUrl: client.webhook_url,
-        s3InputPrefix: client.s3_input_prefix,
-        s3OutputPrefix: client.s3_output_prefix,
-        notes: client.notes,
-        createdAt: client.created_at,
-        updatedAt: client.updated_at,
-      },
-      workflows: workflowsResult.rows.map(w => ({
-        type: w.workflow_type,
-        enabled: w.enabled,
-        config: w.config
-      })),
-      stats: {
-        totalDocuments: parseInt(stats.total_documents) || 0,
-        documentsToday: parseInt(stats.documents_today) || 0,
-        totalApplications: parseInt(stats.total_applications) || 0,
-        totalClaims: parseInt(stats.total_claims) || 0,
-      }
-    });
+    return NextResponse.json({ client });
   } catch (error: any) {
     console.error('Error fetching client:', error);
     return NextResponse.json({ error: 'Failed to fetch client' }, { status: 500 });
   }
 }
 
-// PUT update client
+// PUT - Update client
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
+    const clientId = parseInt(id);
     const body = await request.json();
 
     const {
       name,
+      slug,
+      status,
       contactEmail,
-      contactName,
-      contactPhone,
-      addressLine1,
-      addressLine2,
-      city,
-      state,
-      zipCode,
-      billingPlan,
-      monthlyPrice,
-      billingEmail,
-      billingStartDate,
-      webhookUrl,
-      s3InputPrefix,
-      s3OutputPrefix,
       notes,
-      status
+      dashboardType,
+      customDashboardUrl,
+      statsApiEndpoint,
+      products,
+      branding
     } = body;
 
+    // Build dynamic update query
+    const updates: string[] = [];
+    const values: any[] = [];
+    let paramCount = 1;
+
+    if (name !== undefined) {
+      updates.push(`name = $${paramCount++}`);
+      values.push(name);
+    }
+    if (slug !== undefined) {
+      updates.push(`slug = $${paramCount++}`);
+      values.push(slug);
+    }
+    if (status !== undefined) {
+      updates.push(`status = $${paramCount++}`);
+      values.push(status);
+    }
+    if (contactEmail !== undefined) {
+      updates.push(`contact_email = $${paramCount++}`);
+      values.push(contactEmail);
+    }
+    if (notes !== undefined) {
+      updates.push(`notes = $${paramCount++}`);
+      values.push(notes);
+    }
+    if (dashboardType !== undefined) {
+      updates.push(`dashboard_type = $${paramCount++}`);
+      values.push(dashboardType);
+    }
+    if (customDashboardUrl !== undefined) {
+      updates.push(`custom_dashboard_url = $${paramCount++}`);
+      values.push(customDashboardUrl);
+    }
+    if (statsApiEndpoint !== undefined) {
+      updates.push(`stats_api_endpoint = $${paramCount++}`);
+      values.push(statsApiEndpoint);
+      // Reset connection status when endpoint changes
+      updates.push(`connection_status = 'pending'`);
+    }
+    if (products !== undefined) {
+      updates.push(`products = $${paramCount++}`);
+      values.push(JSON.stringify(products));
+    }
+    if (branding !== undefined) {
+      updates.push(`branding = $${paramCount++}`);
+      values.push(JSON.stringify(branding));
+    }
+
+    updates.push('updated_at = NOW()');
+    values.push(clientId);
+
     const result = await pool.query(`
-      UPDATE clients SET
-        name = COALESCE($1, name),
-        contact_email = $2,
-        contact_name = $3,
-        contact_phone = $4,
-        address_line1 = $5,
-        address_line2 = $6,
-        city = $7,
-        state = $8,
-        zip_code = $9,
-        billing_plan = $10,
-        monthly_price = $11,
-        billing_email = $12,
-        billing_start_date = $13,
-        webhook_url = $14,
-        s3_input_prefix = $15,
-        s3_output_prefix = $16,
-        notes = $17,
-        status = COALESCE($18, status),
-        updated_at = NOW()
-      WHERE id = $19
+      UPDATE clients 
+      SET ${updates.join(', ')}
+      WHERE id = $${paramCount}
       RETURNING *
-    `, [
-      name,
-      contactEmail,
-      contactName,
-      contactPhone,
-      addressLine1,
-      addressLine2,
-      city,
-      state,
-      zipCode,
-      billingPlan,
-      monthlyPrice,
-      billingEmail,
-      billingStartDate,
-      webhookUrl,
-      s3InputPrefix,
-      s3OutputPrefix,
-      notes,
-      status,
-      id
-    ]);
+    `, values);
 
     if (result.rows.length === 0) {
       return NextResponse.json({ error: 'Client not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, client: result.rows[0] });
+    return NextResponse.json({ client: result.rows[0], success: true });
   } catch (error: any) {
     console.error('Error updating client:', error);
+    if (error.code === '23505') {
+      return NextResponse.json({ error: 'A client with this slug already exists' }, { status: 400 });
+    }
     return NextResponse.json({ error: 'Failed to update client' }, { status: 500 });
+  }
+}
+
+// DELETE - Delete client
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const clientId = parseInt(id);
+
+    // Delete related data first (cascading should handle this, but being explicit)
+    await pool.query('DELETE FROM client_stats WHERE client_id = $1', [clientId]);
+    await pool.query('DELETE FROM client_products WHERE client_id = $1', [clientId]);
+    
+    const result = await pool.query('DELETE FROM clients WHERE id = $1 RETURNING id', [clientId]);
+
+    if (result.rows.length === 0) {
+      return NextResponse.json({ error: 'Client not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, deletedId: clientId });
+  } catch (error: any) {
+    console.error('Error deleting client:', error);
+    return NextResponse.json({ error: 'Failed to delete client' }, { status: 500 });
   }
 }

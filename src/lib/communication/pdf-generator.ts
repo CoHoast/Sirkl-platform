@@ -1,5 +1,5 @@
 // Phase 2C: PDF Generator for Offer Letters
-// Uses @react-pdf/renderer for server-side PDF generation
+// Mobile-responsive email templates using table-based layout
 
 import { OfferLetterData, OfferLetterTemplate, DEFAULT_TEMPLATES } from './types';
 
@@ -42,7 +42,7 @@ function formatDate(dateStr: string): string {
   }
 }
 
-// Generate HTML for PDF (react-pdf will convert this)
+// Generate mobile-responsive HTML email using tables
 export function generateOfferLetterHTML(
   data: OfferLetterData,
   template?: OfferLetterTemplate
@@ -70,279 +70,230 @@ export function generateOfferLetterHTML(
   const letterBody = replaceVariables(selectedTemplate.bodyTemplate, templateData);
   const subject = replaceVariables(selectedTemplate.subject, templateData);
   
-  // Generate professional HTML layout
+  // Mobile-responsive email HTML using tables (email-client compatible)
   return `
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>${subject}</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      font-size: 11pt;
-      line-height: 1.6;
-      color: #1a1a1a;
-      padding: 0.75in 1in;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 40px;
-      padding-bottom: 20px;
-      border-bottom: 2px solid #8B5CF6;
-    }
-    .logo-section {
-      flex: 1;
-    }
-    .org-name {
-      font-size: 18pt;
-      font-weight: bold;
-      color: #4F46E5;
-      margin-bottom: 8px;
-    }
-    .org-details {
-      font-size: 9pt;
-      color: #666;
-      line-height: 1.4;
-    }
-    .date-section {
-      text-align: right;
-      font-size: 10pt;
-      color: #666;
-    }
-    .recipient-block {
-      margin-bottom: 30px;
-    }
-    .recipient-block p {
-      margin: 0;
-      line-height: 1.4;
-    }
-    .reference-box {
-      background: #f8f7ff;
-      border-left: 4px solid #8B5CF6;
-      padding: 15px 20px;
-      margin-bottom: 30px;
-    }
-    .reference-box h3 {
-      font-size: 10pt;
-      color: #4F46E5;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .reference-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 10pt;
-    }
-    .reference-item {
-      flex: 1;
-    }
-    .reference-label {
-      color: #666;
-      font-size: 8pt;
-    }
-    .reference-value {
-      font-weight: 600;
-      color: #1a1a1a;
-    }
-    .subject {
-      font-size: 14pt;
-      font-weight: bold;
-      margin-bottom: 25px;
-      color: #1a1a1a;
-    }
-    .body {
-      white-space: pre-wrap;
-      margin-bottom: 30px;
-    }
-    .body strong {
-      color: #4F46E5;
-    }
-    .line-items-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-      font-size: 9pt;
-    }
-    .line-items-table th {
-      background: #4F46E5;
-      color: white;
-      padding: 10px 12px;
-      text-align: left;
-      font-weight: 600;
-    }
-    .line-items-table td {
-      padding: 10px 12px;
-      border-bottom: 1px solid #e5e5e5;
-    }
-    .line-items-table tr:nth-child(even) {
-      background: #f9f9f9;
-    }
-    .amount-col {
-      text-align: right;
-      font-family: 'Courier New', monospace;
-    }
-    .offer-summary {
-      background: linear-gradient(135deg, #f8f7ff 0%, #ede9fe 100%);
-      border: 1px solid #c4b5fd;
-      border-radius: 8px;
-      padding: 20px;
-      margin: 25px 0;
-    }
-    .offer-summary-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px dashed #c4b5fd;
-    }
-    .offer-summary-row:last-child {
-      border-bottom: none;
-      font-weight: bold;
-      font-size: 14pt;
-      color: #4F46E5;
-    }
-    .signature-block {
-      margin-top: 50px;
-    }
-    .signature-line {
-      margin-top: 40px;
-      border-top: 1px solid #333;
-      width: 250px;
-      padding-top: 5px;
-      font-size: 9pt;
-    }
-    .footer {
-      margin-top: 60px;
-      padding-top: 20px;
-      border-top: 1px solid #e5e5e5;
-      font-size: 8pt;
-      color: #999;
-      text-align: center;
-    }
-    .footer .confidential {
-      font-weight: bold;
-      color: #666;
-      margin-bottom: 5px;
-    }
+  <!--[if mso]>
+  <style type="text/css">
+    table { border-collapse: collapse; }
+    td { padding: 0; }
   </style>
+  <![endif]-->
 </head>
-<body>
-  <div class="header">
-    <div class="logo-section">
-      <div class="org-name">${data.orgName}</div>
-      <div class="org-details">
-        ${data.orgAddress}<br>
-        Phone: ${data.orgPhone} | Email: ${data.orgEmail}
-      </div>
-    </div>
-    <div class="date-section">
-      <strong>Date:</strong> ${formatDate(data.letterDate)}<br>
-      <strong>Bill ID:</strong> ${data.billId}<br>
-      <strong>Negotiation #:</strong> ${data.negotiationId}
-    </div>
-  </div>
+<body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: Arial, Helvetica, sans-serif; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
   
-  <div class="recipient-block">
-    <p><strong>${data.providerName}</strong></p>
-    <p>${data.providerAddress}</p>
-    ${data.providerFax ? `<p>Fax: ${data.providerFax}</p>` : ''}
-    ${data.providerEmail ? `<p>Email: ${data.providerEmail}</p>` : ''}
-  </div>
-  
-  <div class="reference-box">
-    <h3>Patient & Service Reference</h3>
-    <table style="width: 100%; border-collapse: collapse;">
-      <tr>
-        <td style="width: 33%; padding: 8px 12px 8px 0; vertical-align: top;">
-          <div class="reference-label">Patient Name</div>
-          <div class="reference-value">${data.patientName}</div>
-        </td>
-        <td style="width: 33%; padding: 8px 12px; vertical-align: top; border-left: 1px solid #e5e7eb;">
-          <div class="reference-label">Member ID</div>
-          <div class="reference-value">${data.memberId}</div>
-        </td>
-        <td style="width: 33%; padding: 8px 0 8px 12px; vertical-align: top; border-left: 1px solid #e5e7eb;">
-          <div class="reference-label">Date of Service</div>
-          <div class="reference-value">${formatDate(data.dateOfService)}</div>
-        </td>
-      </tr>
-    </table>
-  </div>
-  
-  <div class="subject">RE: ${subject}</div>
-  
-  <div class="body">${letterBody.replace(/\n/g, '<br>')}</div>
-  
-  ${data.lineItems.length > 0 ? `
-  <table class="line-items-table">
-    <thead>
-      <tr>
-        <th>CPT Code</th>
-        <th>Description</th>
-        <th class="amount-col">Billed</th>
-        <th class="amount-col">Medicare Rate</th>
-        <th class="amount-col">Our Offer</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${data.lineItems.map(item => `
-        <tr>
-          <td>${item.cptCode}</td>
-          <td>${item.description}</td>
-          <td class="amount-col">${formatCurrency(item.billedAmount)}</td>
-          <td class="amount-col">${formatCurrency(item.medicareRate)}</td>
-          <td class="amount-col">${formatCurrency(item.offeredAmount)}</td>
-        </tr>
-      `).join('')}
-    </tbody>
+  <!-- Wrapper Table -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f4f5;">
+    <tr>
+      <td align="center" style="padding: 20px 10px;">
+        
+        <!-- Main Container -->
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); padding: 24px 20px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="color: #ffffff; font-size: 22px; font-weight: bold;">${data.orgName}</td>
+                </tr>
+                <tr>
+                  <td style="color: #e0e7ff; font-size: 13px; padding-top: 8px;">${data.orgAddress}</td>
+                </tr>
+                <tr>
+                  <td style="color: #e0e7ff; font-size: 13px; padding-top: 4px;">Phone: ${data.orgPhone} | Email: ${data.orgEmail}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Date & Reference -->
+          <tr>
+            <td style="padding: 20px; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="font-size: 14px; color: #64748b;">
+                    <strong>Date:</strong> ${formatDate(data.letterDate)}<br>
+                    <strong>Bill ID:</strong> ${data.billId}<br>
+                    <strong>Negotiation #:</strong> ${data.negotiationId}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Recipient -->
+          <tr>
+            <td style="padding: 20px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="font-size: 15px; color: #0f172a; font-weight: bold; padding-bottom: 4px;">${data.providerName}</td>
+                </tr>
+                <tr>
+                  <td style="font-size: 14px; color: #64748b;">${data.providerAddress}</td>
+                </tr>
+                ${data.providerFax ? `<tr><td style="font-size: 14px; color: #64748b;">Fax: ${data.providerFax}</td></tr>` : ''}
+                ${data.providerEmail ? `<tr><td style="font-size: 14px; color: #64748b;">Email: ${data.providerEmail}</td></tr>` : ''}
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Patient Reference Box -->
+          <tr>
+            <td style="padding: 0 20px 20px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8f7ff; border-left: 4px solid #8b5cf6; border-radius: 4px;">
+                <tr>
+                  <td style="padding: 16px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="font-size: 11px; color: #6366f1; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 12px;">Patient & Service Reference</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                              <td width="33%" style="padding: 8px 8px 8px 0; vertical-align: top;">
+                                <div style="font-size: 11px; color: #64748b;">Patient Name</div>
+                                <div style="font-size: 14px; color: #0f172a; font-weight: 600; margin-top: 2px;">${data.patientName}</div>
+                              </td>
+                              <td width="33%" style="padding: 8px; vertical-align: top; border-left: 1px solid #e2e8f0;">
+                                <div style="font-size: 11px; color: #64748b;">Member ID</div>
+                                <div style="font-size: 14px; color: #0f172a; font-weight: 600; margin-top: 2px;">${data.memberId}</div>
+                              </td>
+                              <td width="34%" style="padding: 8px 0 8px 8px; vertical-align: top; border-left: 1px solid #e2e8f0;">
+                                <div style="font-size: 11px; color: #64748b;">Date of Service</div>
+                                <div style="font-size: 14px; color: #0f172a; font-weight: 600; margin-top: 2px;">${formatDate(data.dateOfService)}</div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Subject -->
+          <tr>
+            <td style="padding: 0 20px 16px;">
+              <div style="font-size: 18px; font-weight: bold; color: #0f172a;">RE: ${subject}</div>
+            </td>
+          </tr>
+          
+          <!-- Body -->
+          <tr>
+            <td style="padding: 0 20px 20px;">
+              <div style="font-size: 14px; color: #374151; line-height: 1.6;">${letterBody.replace(/\n/g, '<br>')}</div>
+            </td>
+          </tr>
+          
+          ${data.lineItems.length > 0 ? `
+          <!-- Line Items Table -->
+          <tr>
+            <td style="padding: 0 20px 20px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+                <tr style="background-color: #6366f1;">
+                  <td style="padding: 10px 12px; color: white; font-size: 12px; font-weight: 600;">CPT</td>
+                  <td style="padding: 10px 12px; color: white; font-size: 12px; font-weight: 600;">Description</td>
+                  <td style="padding: 10px 12px; color: white; font-size: 12px; font-weight: 600; text-align: right;">Billed</td>
+                  <td style="padding: 10px 12px; color: white; font-size: 12px; font-weight: 600; text-align: right;">Offer</td>
+                </tr>
+                ${data.lineItems.map((item, i) => `
+                <tr style="background-color: ${i % 2 === 0 ? '#ffffff' : '#f9fafb'};">
+                  <td style="padding: 10px 12px; font-size: 13px; color: #374151; border-top: 1px solid #e2e8f0;">${item.cptCode}</td>
+                  <td style="padding: 10px 12px; font-size: 13px; color: #374151; border-top: 1px solid #e2e8f0;">${item.description}</td>
+                  <td style="padding: 10px 12px; font-size: 13px; color: #374151; border-top: 1px solid #e2e8f0; text-align: right;">${formatCurrency(item.billedAmount)}</td>
+                  <td style="padding: 10px 12px; font-size: 13px; color: #6366f1; font-weight: 600; border-top: 1px solid #e2e8f0; text-align: right;">${formatCurrency(item.offeredAmount)}</td>
+                </tr>
+                `).join('')}
+              </table>
+            </td>
+          </tr>
+          ` : ''}
+          
+          <!-- Offer Summary -->
+          <tr>
+            <td style="padding: 0 20px 20px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background: linear-gradient(135deg, #f8f7ff 0%, #ede9fe 100%); border: 1px solid #c4b5fd; border-radius: 8px;">
+                <tr>
+                  <td style="padding: 16px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #374151; border-bottom: 1px dashed #c4b5fd;">Original Billed:</td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #374151; text-align: right; border-bottom: 1px dashed #c4b5fd;">${formatCurrency(data.originalAmount)}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #374151; border-bottom: 1px dashed #c4b5fd;">Fair Market Value:</td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #374151; text-align: right; border-bottom: 1px dashed #c4b5fd;">${formatCurrency(data.fairMarketValue)}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 12px 0 8px; font-size: 18px; font-weight: bold; color: #6366f1;">Our Offer (${data.offerPercentage}%):</td>
+                        <td style="padding: 12px 0 8px; font-size: 18px; font-weight: bold; color: #6366f1; text-align: right;">${formatCurrency(data.offerAmount)}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          ${data.responseUrl ? `
+          <!-- Response CTA -->
+          <tr>
+            <td style="padding: 0 20px 24px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #dcfce7; border: 2px solid #16a34a; border-radius: 12px;">
+                <tr>
+                  <td style="padding: 24px; text-align: center;">
+                    <div style="font-size: 16px; font-weight: bold; color: #15803d; margin-bottom: 8px;">Respond to This Offer Online</div>
+                    <div style="font-size: 14px; color: #166534; margin-bottom: 16px;">Accept, counter, or decline — quick and easy.</div>
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+                      <tr>
+                        <td style="background-color: #16a34a; border-radius: 8px;">
+                          <a href="${data.responseUrl}" style="display: inline-block; padding: 14px 32px; color: #ffffff; font-size: 16px; font-weight: bold; text-decoration: none;">Click Here to Respond</a>
+                        </td>
+                      </tr>
+                    </table>
+                    <div style="font-size: 12px; color: #6b7280; margin-top: 16px; word-break: break-all;">${data.responseUrl}</div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          ` : ''}
+          
+          <!-- Signature -->
+          <tr>
+            <td style="padding: 0 20px 24px;">
+              <div style="font-size: 14px; color: #374151;">Sincerely,</div>
+              <div style="font-size: 14px; color: #0f172a; font-weight: 600; margin-top: 24px;">${data.contactName}</div>
+              <div style="font-size: 14px; color: #64748b;">${data.orgName}</div>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 20px; background-color: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center;">
+              <div style="font-size: 11px; color: #64748b; font-weight: bold; margin-bottom: 4px;">CONFIDENTIAL</div>
+              <div style="font-size: 11px; color: #94a3b8;">This communication contains confidential information intended only for the addressee.</div>
+            </td>
+          </tr>
+          
+        </table>
+        <!-- End Main Container -->
+        
+      </td>
+    </tr>
   </table>
-  ` : ''}
+  <!-- End Wrapper -->
   
-  <div class="offer-summary">
-    <div class="offer-summary-row">
-      <span>Original Billed Amount:</span>
-      <span>${formatCurrency(data.originalAmount)}</span>
-    </div>
-    <div class="offer-summary-row">
-      <span>Fair Market Value (150% Medicare):</span>
-      <span>${formatCurrency(data.fairMarketValue)}</span>
-    </div>
-    <div class="offer-summary-row">
-      <span>Our Offer (${data.offerPercentage}% of billed):</span>
-      <span>${formatCurrency(data.offerAmount)}</span>
-    </div>
-  </div>
-  
-  ${data.responseUrl ? `
-  <div style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border: 2px solid #16a34a; border-radius: 12px; padding: 24px; margin: 30px 0; text-align: center;">
-    <h3 style="color: #15803d; margin: 0 0 12px; font-size: 14pt;">Respond Online</h3>
-    <p style="color: #166534; margin: 0 0 16px; font-size: 11pt;">Accept this offer, submit a counter, or decline — all online.</p>
-    <a href="${data.responseUrl}" style="display: inline-block; background: #16a34a; color: white; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: bold; font-size: 12pt;">Click Here to Respond</a>
-    <p style="color: #6b7280; margin: 16px 0 0; font-size: 9pt;">Or visit: ${data.responseUrl}</p>
-  </div>
-  ` : ''}
-  
-  <div class="signature-block">
-    <p>Sincerely,</p>
-    <div class="signature-line">
-      ${data.contactName}<br>
-      ${data.orgName}
-    </div>
-  </div>
-  
-  <div class="footer">
-    <div class="confidential">CONFIDENTIAL</div>
-    This communication contains confidential information intended only for the addressee.
-    If you received this in error, please notify us immediately and destroy this document.
-  </div>
 </body>
 </html>
 `;
@@ -409,6 +360,10 @@ Fair Market Value:           ${formatCurrency(data.fairMarketValue)}
 Our Offer:                   ${formatCurrency(data.offerAmount)} (${data.offerPercentage}%)
 ================================================================================
 
+${data.responseUrl ? `
+RESPOND ONLINE: ${data.responseUrl}
+
+` : ''}
 CONFIDENTIAL - This communication is intended only for the addressee.
 `;
 }

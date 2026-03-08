@@ -98,6 +98,21 @@ export default function BillDetailPage() {
   const [showResponseModal, setShowResponseModal] = useState(false);
   const [showSendModal, setShowSendModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editForm, setEditForm] = useState({
+    member_name: '',
+    member_id: '',
+    provider_name: '',
+    provider_npi: '',
+    provider_phone: '',
+    provider_fax: '',
+    provider_email: '',
+    provider_address: '',
+    account_number: '',
+    date_of_service: '',
+    total_billed: '',
+    notes: ''
+  });
   const [offerAmount, setOfferAmount] = useState('');
   const [offerStrategy, setOfferStrategy] = useState('cash_pay');
   const [responseType, setResponseType] = useState('accepted');
@@ -257,6 +272,62 @@ export default function BillDetailPage() {
     } catch (error) {
       console.error('Error analyzing bill:', error);
       alert('Failed to analyze bill');
+    }
+    setActionLoading(false);
+  };
+
+  const openEditModal = () => {
+    if (bill) {
+      setEditForm({
+        member_name: bill.member_name || '',
+        member_id: bill.member_id || '',
+        provider_name: bill.provider_name || '',
+        provider_npi: bill.provider_npi || '',
+        provider_phone: bill.provider_phone || '',
+        provider_fax: bill.provider_fax || '',
+        provider_email: bill.provider_email || '',
+        provider_address: bill.provider_address || '',
+        account_number: bill.account_number || '',
+        date_of_service: bill.date_of_service ? new Date(bill.date_of_service).toISOString().split('T')[0] : '',
+        total_billed: bill.total_billed ? String(bill.total_billed) : '',
+        notes: bill.notes || ''
+      });
+      setShowEditModal(true);
+    }
+  };
+
+  const saveEditedBill = async () => {
+    setActionLoading(true);
+    try {
+      const res = await fetch(`/api/db/bill-negotiator/bills/${billId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          memberName: editForm.member_name,
+          memberId: editForm.member_id,
+          providerName: editForm.provider_name,
+          providerNpi: editForm.provider_npi,
+          providerPhone: editForm.provider_phone,
+          providerFax: editForm.provider_fax,
+          providerEmail: editForm.provider_email,
+          providerAddress: editForm.provider_address,
+          accountNumber: editForm.account_number,
+          dateOfService: editForm.date_of_service,
+          totalBilled: parseFloat(editForm.total_billed) || 0,
+          notes: editForm.notes
+        })
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || 'Failed to update bill');
+      }
+
+      await fetchBill();
+      setShowEditModal(false);
+    } catch (error) {
+      console.error('Error updating bill:', error);
+      alert(error instanceof Error ? error.message : 'Failed to update bill');
     }
     setActionLoading(false);
   };
@@ -1020,6 +1091,7 @@ export default function BillDetailPage() {
             <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#0f172a', marginBottom: '20px' }}>Quick Actions</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <button
+                onClick={openEditModal}
                 style={{
                   padding: '12px 16px',
                   background: '#f8fafc',
@@ -1500,6 +1572,230 @@ export default function BillDetailPage() {
                 }}
               >
                 {actionLoading ? 'Recording...' : 'Record Payment'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Bill Modal */}
+      {showEditModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 50
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '28px',
+            maxWidth: '700px',
+            width: '95%',
+            maxHeight: '90vh',
+            overflow: 'auto'
+          }}>
+            <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a', marginBottom: '24px' }}>
+              Edit Bill Details
+            </h2>
+            
+            {/* Member Info */}
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#64748b', marginBottom: '12px', textTransform: 'uppercase' }}>
+                Member Information
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
+                    Member Name
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.member_name}
+                    onChange={(e) => setEditForm({ ...editForm, member_name: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '14px' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
+                    Member ID
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.member_id}
+                    onChange={(e) => setEditForm({ ...editForm, member_id: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '14px' }}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Provider Info */}
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#64748b', marginBottom: '12px', textTransform: 'uppercase' }}>
+                Provider Information
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
+                    Provider Name
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.provider_name}
+                    onChange={(e) => setEditForm({ ...editForm, provider_name: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '14px' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
+                    NPI
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.provider_npi}
+                    onChange={(e) => setEditForm({ ...editForm, provider_npi: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '14px' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
+                    Phone
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.provider_phone}
+                    onChange={(e) => setEditForm({ ...editForm, provider_phone: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '14px' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
+                    Fax
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.provider_fax}
+                    onChange={(e) => setEditForm({ ...editForm, provider_fax: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '14px' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={editForm.provider_email}
+                    onChange={(e) => setEditForm({ ...editForm, provider_email: e.target.value })}
+                    placeholder="billing@provider.com"
+                    style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '14px' }}
+                  />
+                </div>
+                <div style={{ gridColumn: 'span 2' }}>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.provider_address}
+                    onChange={(e) => setEditForm({ ...editForm, provider_address: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '14px' }}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Bill Info */}
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#64748b', marginBottom: '12px', textTransform: 'uppercase' }}>
+                Bill Details
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
+                    Account Number
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.account_number}
+                    onChange={(e) => setEditForm({ ...editForm, account_number: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '14px' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
+                    Date of Service
+                  </label>
+                  <input
+                    type="date"
+                    value={editForm.date_of_service}
+                    onChange={(e) => setEditForm({ ...editForm, date_of_service: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '14px' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
+                    Total Billed
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }}>$</span>
+                    <input
+                      type="number"
+                      value={editForm.total_billed}
+                      onChange={(e) => setEditForm({ ...editForm, total_billed: e.target.value })}
+                      style={{ width: '100%', padding: '10px 12px 10px 28px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '14px' }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Notes */}
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, color: '#374151', marginBottom: '6px' }}>
+                Notes
+              </label>
+              <textarea
+                value={editForm.notes}
+                onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+                rows={3}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '14px', resize: 'vertical' }}
+              />
+            </div>
+            
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowEditModal(false)}
+                style={{
+                  padding: '12px 24px',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  background: 'white',
+                  fontWeight: 500,
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveEditedBill}
+                disabled={actionLoading}
+                style={{
+                  padding: '12px 24px',
+                  background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: 600,
+                  cursor: actionLoading ? 'not-allowed' : 'pointer',
+                  opacity: actionLoading ? 0.7 : 1
+                }}
+              >
+                {actionLoading ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           </div>

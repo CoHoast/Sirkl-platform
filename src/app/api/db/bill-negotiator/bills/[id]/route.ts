@@ -85,11 +85,15 @@ export async function PUT(
       fairPrice,
       providerName,
       providerNpi,
+      providerPhone,
       providerFax,
       providerEmail,
+      providerAddress,
       memberName,
+      memberId,
       accountNumber,
-      dateOfService
+      dateOfService,
+      notes
     } = data;
 
     // Build dynamic update query
@@ -168,15 +172,33 @@ export async function PUT(
       paramIndex++;
     }
 
+    if (providerPhone !== undefined) {
+      updates.push(`provider_phone = $${paramIndex}`);
+      values.push(providerPhone);
+      paramIndex++;
+    }
+
     if (providerEmail !== undefined) {
       updates.push(`provider_email = $${paramIndex}`);
       values.push(providerEmail);
       paramIndex++;
     }
 
+    if (providerAddress !== undefined) {
+      updates.push(`provider_address = $${paramIndex}`);
+      values.push(providerAddress);
+      paramIndex++;
+    }
+
     if (memberName !== undefined) {
       updates.push(`member_name = $${paramIndex}`);
       values.push(memberName);
+      paramIndex++;
+    }
+
+    if (memberId !== undefined) {
+      updates.push(`member_id = $${paramIndex}`);
+      values.push(memberId);
       paramIndex++;
     }
 
@@ -189,6 +211,12 @@ export async function PUT(
     if (dateOfService !== undefined) {
       updates.push(`date_of_service = $${paramIndex}`);
       values.push(dateOfService);
+      paramIndex++;
+    }
+
+    if (notes !== undefined) {
+      updates.push(`notes = $${paramIndex}`);
+      values.push(notes);
       paramIndex++;
     }
 

@@ -8,6 +8,7 @@ export async function GET(request: NextRequest) {
     const clientId = searchParams.get('clientId');
     const status = searchParams.get('status');
     const memberId = searchParams.get('memberId');
+    const search = searchParams.get('search');
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
 
@@ -30,6 +31,16 @@ export async function GET(request: NextRequest) {
     if (memberId) {
       whereClause += ` AND b.member_id = $${paramIndex}`;
       params.push(memberId);
+      paramIndex++;
+    }
+    
+    if (search) {
+      whereClause += ` AND (
+        LOWER(b.member_name) LIKE LOWER($${paramIndex}) OR
+        LOWER(b.provider_name) LIKE LOWER($${paramIndex}) OR
+        LOWER(b.account_number) LIKE LOWER($${paramIndex})
+      )`;
+      params.push(`%${search}%`);
       paramIndex++;
     }
 

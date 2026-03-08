@@ -13,6 +13,8 @@ interface Bill {
   member_name: string;
   provider_name: string;
   provider_npi: string;
+  provider_email?: string;
+  provider_fax?: string;
   account_number: string;
   date_of_service: string;
   total_billed: number;
@@ -31,14 +33,18 @@ export default function BillsListPage() {
   const [bills, setBills] = useState<Bill[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0);
   const [showBulkUpload, setShowBulkUpload] = useState(false);
   const limit = 20;
 
   useEffect(() => {
-    fetchBills();
-  }, [selectedClient, statusFilter, page]);
+    const debounce = setTimeout(() => {
+      fetchBills();
+    }, searchQuery ? 300 : 0); // Debounce search
+    return () => clearTimeout(debounce);
+  }, [selectedClient, statusFilter, page, searchQuery]);
 
   const fetchBills = async () => {
     setLoading(true);
@@ -46,6 +52,7 @@ export default function BillsListPage() {
       let url = `/api/db/bill-negotiator/bills?limit=${limit}&offset=${page * limit}`;
       if (selectedClient) url += `&clientId=${selectedClient.id}`;
       if (statusFilter !== 'all') url += `&status=${statusFilter}`;
+      if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
       
       const res = await fetch(url);
       const data = await res.json();
@@ -55,6 +62,13 @@ export default function BillsListPage() {
       console.error('Error fetching bills:', error);
     }
     setLoading(false);
+  };
+  
+  // Check if bill needs manual review
+  const needsReview = (bill: Bill) => {
+    // Needs review if: no provider contact info, or extraction confidence low
+    const noContact = !bill.provider_email && !bill.provider_fax;
+    return noContact && bill.status === 'received';
   };
 
   const formatCurrency = (amount: number) => {
@@ -185,27 +199,51 @@ export default function BillsListPage() {
         </div>
       </div>
 
-      {/* Filters */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
-        {statuses.map(s => (
-          <button
-            key={s.value}
-            onClick={() => { setStatusFilter(s.value); setPage(0); }}
+      {/* Search & Filters */}
+      <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
+        {/* Search */}
+        <div style={{ position: 'relative', flex: '1', minWidth: '250px', maxWidth: '400px' }}>
+          <svg width="20" height="20" fill="none" stroke="#94a3b8" strokeWidth="2" viewBox="0 0 24 24" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }}>
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input
+            type="text"
+            placeholder="Search by member or provider name..."
+            value={searchQuery}
+            onChange={(e) => { setSearchQuery(e.target.value); setPage(0); }}
             style={{
-              padding: '8px 16px',
+              width: '100%',
+              padding: '10px 12px 10px 42px',
               borderRadius: '8px',
-              border: statusFilter === s.value ? '2px solid #6366f1' : '1px solid #e2e8f0',
-              background: statusFilter === s.value ? '#eef2ff' : 'white',
-              color: statusFilter === s.value ? '#6366f1' : '#64748b',
-              fontWeight: 500,
+              border: '1px solid #e2e8f0',
               fontSize: '14px',
-              cursor: 'pointer',
-              transition: 'all 0.15s'
+              outline: 'none'
             }}
-          >
-            {s.label}
-          </button>
-        ))}
+          />
+        </div>
+        
+        {/* Status Filters */}
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {statuses.map(s => (
+            <button
+              key={s.value}
+              onClick={() => { setStatusFilter(s.value); setPage(0); }}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '8px',
+                border: statusFilter === s.value ? '2px solid #6366f1' : '1px solid #e2e8f0',
+                background: statusFilter === s.value ? '#eef2ff' : 'white',
+                color: statusFilter === s.value ? '#6366f1' : '#64748b',
+                fontWeight: 500,
+                fontSize: '14px',
+                cursor: 'pointer',
+                transition: 'all 0.15s'
+              }}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Bills Table */}
@@ -281,7 +319,7 @@ export default function BillsListPage() {
                       <td style={{ padding: '16px', textAlign: 'right' }}>
                         {bill.savings_amount ? (
                           <span style={{ color: '#16a34a', fontWeight: 600, fontSize: '14px' }}>
-                            {formatCurrency(bill.savings_amount)} ({bill.savings_percent?.toFixed(0)}%)
+                            {formatCurrency(bill.savings_amount)} ({parseFloat(String(bill.savings_percent || 0)).toFixed(0)}%)
                           </span>
                         ) : potentialSavings && potentialSavings > 0 ? (
                           <span style={{ color: '#64748b', fontSize: '13px' }}>
@@ -292,16 +330,30 @@ export default function BillsListPage() {
                         )}
                       </td>
                       <td style={{ padding: '16px', textAlign: 'center' }}>
-                        <span style={{
-                          padding: '4px 10px',
-                          borderRadius: '6px',
-                          fontSize: '12px',
-                          fontWeight: 600,
-                          background: statusStyle.bg,
-                          color: statusStyle.color
-                        }}>
-                          {getStatusLabel(bill.status)}
-                        </span>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                          <span style={{
+                            padding: '4px 10px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: 600,
+                            background: statusStyle.bg,
+                            color: statusStyle.color
+                          }}>
+                            {getStatusLabel(bill.status)}
+                          </span>
+                          {needsReview(bill) && (
+                            <span style={{
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              fontSize: '10px',
+                              fontWeight: 600,
+                              background: '#fef3c7',
+                              color: '#d97706'
+                            }}>
+                              ⚠️ Needs Review
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td style={{ padding: '16px 20px', textAlign: 'right', fontSize: '13px', color: '#64748b' }}>
                         {formatDate(bill.received_at)}

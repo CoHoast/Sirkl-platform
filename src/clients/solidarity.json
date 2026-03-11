@@ -1,0 +1,45 @@
+{
+  "id": "solidarity",
+  "name": "Solidarity Healthshare",
+  "industry": "healthcare",
+  "industryType": "healthshare",
+  "subdomain": "solidarity",
+  
+  "modules": [
+    "claims-adjudication",
+    "claims-repricing",
+    "bill-negotiator",
+    "provider-bills",
+    "member-intake",
+    "analytics",
+    "team-management",
+    "email-intake",
+    "audit-log"
+  ],
+  
+  "theme": {
+    "primaryColor": "#1a365d",
+    "secondaryColor": "#38a169",
+    "logo": "/logos/solidarity.png"
+  },
+  
+  "settings": {
+    "emailIntakeEnabled": true,
+    "aiAnalysisEnabled": true
+  },
+  
+  "contact": {
+    "name": "Solidarity Admin",
+    "email": "admin@solidarityhealthshare.com"
+  },
+  
+  "billing": {
+    "onboardingFee": null,
+    "monthlyFee": null,
+    "billingCycle": "monthly"
+  },
+  
+  "status": "prospect",
+  "createdAt": "2026-03-01",
+  "goLiveDate": null
+}

@@ -1,0 +1,45 @@
+{
+  "id": "optalis",
+  "name": "Optalis Healthcare",
+  "industry": "healthcare",
+  "industryType": "snf",
+  "subdomain": "optalis",
+  
+  "modules": [
+    "application-intake",
+    "document-intake",
+    "bed-management",
+    "analytics",
+    "team-management",
+    "email-intake",
+    "audit-log"
+  ],
+  
+  "theme": {
+    "primaryColor": "#275380",
+    "secondaryColor": "#0d9488",
+    "logo": "/logos/optalis.png"
+  },
+  
+  "settings": {
+    "facilities": 9,
+    "emailIntakeEnabled": true,
+    "aiAnalysisEnabled": true,
+    "mobileAppEnabled": true
+  },
+  
+  "contact": {
+    "name": "Optalis Admin",
+    "email": "admin@optalis.com"
+  },
+  
+  "billing": {
+    "onboardingFee": 20000,
+    "monthlyFee": 4000,
+    "billingCycle": "monthly"
+  },
+  
+  "status": "active",
+  "createdAt": "2026-02-01",
+  "goLiveDate": null
+}

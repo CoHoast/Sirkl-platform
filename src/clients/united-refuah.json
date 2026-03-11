@@ -1,0 +1,43 @@
+{
+  "id": "united-refuah",
+  "name": "United Refuah Healthshare",
+  "industry": "healthcare",
+  "industryType": "healthshare",
+  "subdomain": "unitedrefuah",
+  
+  "modules": [
+    "claims-adjudication",
+    "claims-repricing",
+    "bill-negotiator",
+    "member-intake",
+    "analytics",
+    "team-management",
+    "audit-log"
+  ],
+  
+  "theme": {
+    "primaryColor": "#2d3748",
+    "secondaryColor": "#4299e1",
+    "logo": "/logos/united-refuah.png"
+  },
+  
+  "settings": {
+    "emailIntakeEnabled": true,
+    "aiAnalysisEnabled": true
+  },
+  
+  "contact": {
+    "name": "United Refuah Admin",
+    "email": "admin@unitedrefuah.org"
+  },
+  
+  "billing": {
+    "onboardingFee": null,
+    "monthlyFee": null,
+    "billingCycle": "monthly"
+  },
+  
+  "status": "prospect",
+  "createdAt": "2026-03-01",
+  "goLiveDate": null
+}

@@ -1,0 +1,52 @@
+[
+  {
+    "filename": "bill-01-mountain-view.png",
+    "success": false,
+    "error": "Extraction failed: 500"
+  },
+  {
+    "filename": "bill-02-rocky-mountain.png",
+    "success": false,
+    "error": "Extraction failed: 500"
+  },
+  {
+    "filename": "bill-03-advanced-imaging.png",
+    "success": false,
+    "error": "Extraction failed: 500"
+  },
+  {
+    "filename": "bill-04-colorado-surgical.png",
+    "success": false,
+    "error": "Extraction failed: 500"
+  },
+  {
+    "filename": "bill-05-denver-emergency.png",
+    "success": false,
+    "error": "Extraction failed: 500"
+  },
+  {
+    "filename": "bill-06-peak-anesthesia.png",
+    "success": false,
+    "error": "Extraction failed: 500"
+  },
+  {
+    "filename": "bill-07-colorado-physical.png",
+    "success": false,
+    "error": "Extraction failed: 500"
+  },
+  {
+    "filename": "bill-08-skin-health.png",
+    "success": false,
+    "error": "Extraction failed: 500"
+  },
+  {
+    "filename": "bill-09-digestive-health.png",
+    "success": false,
+    "error": "Extraction failed: 500"
+  },
+  {
+    "filename": "bill-10-neurology-specialists.png",
+    "success": false,
+    "error": "Extraction failed: 500"
+  }
+]

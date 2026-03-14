@@ -1,605 +1,210 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { useUser } from '@/context/UserContext';
-import { useClient } from '@/context/ClientContext';
-import { filterNavigation, canAccess, getRoleDisplayName, demoUsers, UserRole } from '@/lib/permissions';
+import { usePathname } from 'next/navigation';
 
-// Platform-level navigation (no client selected)
-const platformNavigation = [
-  {
-    name: 'Overview',
-    items: [
-      { name: 'Dashboard', href: '/dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
-      { name: 'Processing Queue', href: '/dashboard/queue', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
-    ]
-  },
-  {
-    name: 'Products',
-    items: [
-      { name: 'Bill Negotiator', href: '/dashboard/bill-negotiator', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
-    ]
-  },
-  {
-    name: 'Operations',
-    items: [
-      { name: 'Email Intake', href: '/dashboard/email-intake', icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
-      { name: 'Billing', href: '/dashboard/billing', icon: 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z' },
-    ]
-  },
-  {
-    name: 'Analytics',
-    items: [
-      { name: 'Reports', href: '/dashboard/reports', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-      { name: 'Audit Log', href: '/dashboard/audit-log', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
-    ]
-  },
-  {
-    name: 'Admin',
-    items: [
-      { name: 'Clients', href: '/dashboard/clients', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
-      { name: 'Module Palette', href: '/dashboard/modules', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z' },
-      { name: 'Workflow Manager', href: '/dashboard/workflows', icon: 'M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z' },
-      { name: 'Team', href: '/dashboard/team', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
-      { name: 'Security', href: '/dashboard/security', icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' },
-      { name: 'Settings', href: '/dashboard/settings', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
-    ]
-  },
+// Sirkl Bill Negotiator navigation
+const navigation = [
+  { name: 'Dashboard', href: '/dashboard/bill-negotiator', icon: DashboardIcon },
+  { name: 'Bills', href: '/dashboard/bill-negotiator/bills', icon: BillsIcon },
+  { name: 'Review Queue', href: '/dashboard/bill-negotiator/review', icon: ReviewIcon },
+  { name: 'Upload', href: '/dashboard/bill-negotiator/upload', icon: UploadIcon },
+  { name: 'Analytics', href: '/dashboard/bill-negotiator/analytics', icon: AnalyticsIcon },
+  { name: 'Reports', href: '/dashboard/bill-negotiator/reports', icon: ReportsIcon },
+  { name: 'Settings', href: '/dashboard/bill-negotiator/settings', icon: SettingsIcon },
 ];
 
-// Client-level navigation (client selected) - simplified for Super Admin
-const clientNavigation = [
-  {
-    name: 'Client Overview',
-    items: [
-      { name: 'Dashboard', href: '/dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
-      { name: 'Manage Workflows', href: '/dashboard/workflows', icon: 'M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z' },
-      { name: 'Client Settings', href: '/dashboard/clients/settings', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
-    ]
-  },
-  {
-    name: 'Products',
-    items: [
-      { name: 'Bill Negotiator', href: '/dashboard/bill-negotiator', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
-    ]
-  },
-  {
-    name: 'Analytics',
-    items: [
-      { name: 'Reports', href: '/dashboard/reports', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-      { name: 'Audit Log', href: '/dashboard/audit-log', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
-    ]
-  },
-];
+function DashboardIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
+    </svg>
+  );
+}
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+function BillsIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+  );
+}
+
+function ReviewIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+    </svg>
+  );
+}
+
+function UploadIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+    </svg>
+  );
+}
+
+function AnalyticsIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+    </svg>
+  );
+}
+
+function ReportsIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+  );
+}
+
+function SettingsIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
-  const router = useRouter();
-  const { user, switchUser, isLoading: userLoading } = useUser();
-  const { selectedClient, selectClient, clients, isLoading: clientLoading } = useClient();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showClientDropdown, setShowClientDropdown] = useState(false);
-
-  const closeSidebar = () => setSidebarOpen(false);
-
-  // Map workflow types to their navigation hrefs
-  const workflowHrefMap: Record<string, string> = {
-    'document-intake': '/dashboard/workflows/document-intake',
-    'member-intake': '/dashboard/workflows/member-intake',
-    'claims-adjudication': '/dashboard/workflows/claims-adjudication',
-    'provider-bills': '/dashboard/workflows/provider-bills',
-    'workers-comp': '/dashboard/workflows/workers-comp',
-  };
-
-  // Choose navigation based on whether a client is selected
-  let navigationGroups = selectedClient ? clientNavigation : platformNavigation;
-
-  // Filter workflows based on enabled workflows for selected client
-  if (selectedClient && selectedClient.enabledWorkflows && selectedClient.enabledWorkflows.length > 0) {
-    const enabledWorkflowTypes = selectedClient.enabledWorkflows
-      .filter(w => w.enabled)
-      .map(w => w.type);
-    
-    navigationGroups = navigationGroups.map(group => {
-      if (group.name === 'Workflows') {
-        return {
-          ...group,
-          items: group.items.filter(item => {
-            // Find which workflow type this nav item corresponds to
-            const workflowType = Object.entries(workflowHrefMap).find(
-              ([_, href]) => href === item.href
-            )?.[0];
-            return workflowType ? enabledWorkflowTypes.includes(workflowType) : true;
-          })
-        };
-      }
-      return group;
-    }).filter(group => group.items.length > 0); // Remove empty groups
-  }
-
-  // Filter navigation based on user role
-  const filteredNavigation = user 
-    ? filterNavigation(navigationGroups, user.role)
-    : navigationGroups;
-
-  // Redirect if user doesn't have access to current page
-  useEffect(() => {
-    if (!userLoading && user && !canAccess(user.role, pathname)) {
-      const firstAccessiblePage = filteredNavigation[0]?.items[0]?.href || '/dashboard';
-      router.push(firstAccessiblePage);
-    }
-  }, [pathname, user, userLoading, filteredNavigation, router]);
-
-  // Loading state
-  if (userLoading || clientLoading) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div className="loading-spinner" style={{ 
-            width: 40, 
-            height: 40, 
-            border: '3px solid #e5e7eb', 
-            borderTopColor: '#0f172a', 
-            borderRadius: '50%', 
-            animation: 'spin 0.8s linear infinite',
-            margin: '0 auto 16px'
-          }} />
-          <p style={{ color: '#6b7280' }}>Loading...</p>
-        </div>
-        <style jsx>{`
-          @keyframes spin {
-            to { transform: rotate(360deg); }
-          }
-        `}</style>
-      </div>
-    );
-  }
 
   return (
-    <div>
-      {/* Mobile Header */}
-      <div className="mobile-header">
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img 
-            src="/dokit-logo.png" 
-            alt="DOKit" 
-            style={{ height: '28px', width: 'auto' }}
-          />
-        </div>
-        <button className="mobile-menu-btn" onClick={() => setSidebarOpen(true)}>
-          <svg width="24" height="24" fill="none" stroke="#374151" strokeWidth="2" viewBox="0 0 24 24">
-            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-          </svg>
-        </button>
-      </div>
-
-      {/* Sidebar Overlay */}
-      <div className={`sidebar-overlay ${sidebarOpen ? 'active' : ''}`} onClick={closeSidebar} />
+    <div className="min-h-screen bg-slate-900">
+      {/* Mobile sidebar backdrop */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
       {/* Sidebar */}
-      <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <div className="sidebar-logo">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <img 
-                src="/dokit-logo.png" 
-                alt="DOKit" 
-                style={{ height: '32px', width: 'auto' }}
-              />
-            </div>
-            <button 
-              onClick={closeSidebar}
-              style={{ display: 'none', background: 'none', border: 'none', cursor: 'pointer', padding: '8px' }}
-              className="mobile-close-btn"
-            >
-              <svg width="24" height="24" fill="none" stroke="#6b7280" strokeWidth="2" viewBox="0 0 24 24">
-                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      <aside className={`
+        fixed top-0 left-0 z-50 h-full w-64 bg-slate-800 border-r border-slate-700
+        transform transition-transform duration-200 ease-in-out
+        lg:translate-x-0
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        {/* Logo */}
+        <div className="h-16 flex items-center px-6 border-b border-slate-700">
+          <Link href="/dashboard/bill-negotiator" className="flex items-center gap-3">
+            <div className="w-8 h-8 relative">
+              <svg viewBox="0 0 72 72" fill="none" className="w-full h-full">
+                <path d="M36 6C19.4315 6 6 19.4315 6 36C6 52.5685 19.4315 66 36 66" stroke="url(#g1)" strokeWidth="4" strokeLinecap="round"/>
+                <path d="M36 6C52.5685 6 66 19.4315 66 36C66 52.5685 52.5685 66 36 66" stroke="url(#g2)" strokeWidth="4" strokeLinecap="round"/>
+                <defs>
+                  <linearGradient id="g1" x1="6" y1="36" x2="36" y2="36">
+                    <stop stopColor="#06b6d4"/>
+                    <stop offset="1" stopColor="#3b82f6"/>
+                  </linearGradient>
+                  <linearGradient id="g2" x1="36" y1="36" x2="66" y2="36">
+                    <stop stopColor="#3b82f6"/>
+                    <stop offset="1" stopColor="#8b5cf6"/>
+                  </linearGradient>
+                </defs>
               </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Client Switcher */}
-        <div style={{ padding: '16px', borderBottom: '1px solid #e5e7eb' }}>
-          <div 
-            onClick={() => setShowClientDropdown(!showClientDropdown)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '12px 16px',
-              background: selectedClient ? '#eef2ff' : '#f9fafb',
-              borderRadius: '10px',
-              cursor: 'pointer',
-              border: selectedClient ? '1px solid #c7d2fe' : '1px solid #e5e7eb',
-              transition: 'all 0.2s',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{
-                width: 32,
-                height: 32,
-                borderRadius: '8px',
-                background: selectedClient ? 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)' : '#e5e7eb',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-                <svg width="16" height="16" fill="none" stroke={selectedClient ? 'white' : '#6b7280'} strokeWidth="2" viewBox="0 0 24 24">
-                  <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-              </div>
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#111827' }}>
-                  {selectedClient ? selectedClient.name : 'All Clients'}
-                </div>
-                <div style={{ fontSize: '11px', color: '#6b7280' }}>
-                  {selectedClient ? 'Client View' : 'Platform View'}
-                </div>
-              </div>
             </div>
-            <svg 
-              width="16" 
-              height="16" 
-              fill="none" 
-              stroke="#6b7280" 
-              strokeWidth="2" 
-              viewBox="0 0 24 24"
-              style={{ 
-                transform: showClientDropdown ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.2s'
-              }}
-            >
-              <path d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
-
-          {/* Client Dropdown */}
-          {showClientDropdown && (
-            <div style={{
-              marginTop: '8px',
-              background: 'white',
-              borderRadius: '8px',
-              border: '1px solid #e5e7eb',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-              overflow: 'hidden',
-            }}>
-              {/* All Clients Option */}
-              <button
-                onClick={() => {
-                  selectClient(null);
-                  setShowClientDropdown(false);
-                }}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '12px 16px',
-                  background: !selectedClient ? '#f0f9ff' : 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  borderBottom: '1px solid #f0f0f0',
-                }}
-              >
-                <div style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: '6px',
-                  background: !selectedClient ? '#6366f1' : '#e5e7eb',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <svg width="14" height="14" fill="none" stroke={!selectedClient ? 'white' : '#6b7280'} strokeWidth="2" viewBox="0 0 24 24">
-                    <path d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                  </svg>
-                </div>
-                <div>
-                  <div style={{ fontSize: '13px', fontWeight: 500, color: '#1a1a1a' }}>All Clients</div>
-                  <div style={{ fontSize: '11px', color: '#6b7280' }}>Platform overview</div>
-                </div>
-                {!selectedClient && (
-                  <svg width="16" height="16" fill="none" stroke="#6366f1" strokeWidth="2" viewBox="0 0 24 24" style={{ marginLeft: 'auto' }}>
-                    <path d="M5 13l4 4L19 7" />
-                  </svg>
-                )}
-              </button>
-
-              {/* Client List */}
-              <div style={{ maxHeight: '240px', overflowY: 'auto' }}>
-                {clients.map(client => (
-                  <button
-                    key={client.id}
-                    onClick={() => {
-                      selectClient(client);
-                      setShowClientDropdown(false);
-                    }}
-                    style={{
-                      width: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      padding: '12px 16px',
-                      background: selectedClient?.id === client.id ? '#f0f9ff' : 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                    }}
-                  >
-                    <div style={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: '6px',
-                      background: selectedClient?.id === client.id ? '#6366f1' : '#f3f4f6',
-                      color: selectedClient?.id === client.id ? 'white' : '#6b7280',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '11px',
-                      fontWeight: 600,
-                    }}>
-                      {client.name.split(' ').map(w => w[0]).slice(0, 2).join('')}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: '13px', fontWeight: 500, color: '#1a1a1a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {client.name}
-                      </div>
-                      <div style={{ fontSize: '11px', color: '#6b7280' }}>
-                        {client.documentsThisMonth.toLocaleString()} docs this month
-                      </div>
-                    </div>
-                    {client.status === 'onboarding' && (
-                      <span style={{ 
-                        fontSize: '10px', 
-                        padding: '2px 6px', 
-                        background: '#fef3c7', 
-                        color: '#92400e',
-                        borderRadius: '4px',
-                        fontWeight: 500,
-                      }}>
-                        Onboarding
-                      </span>
-                    )}
-                    {selectedClient?.id === client.id && (
-                      <svg width="16" height="16" fill="none" stroke="#6366f1" strokeWidth="2" viewBox="0 0 24 24">
-                        <path d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-        
-        <nav className="sidebar-nav" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {filteredNavigation.map((group) => (
-            <div key={group.name}>
-              <div style={{ 
-                fontSize: '11px', 
-                fontWeight: 600, 
-                color: '#9ca3af', 
-                textTransform: 'uppercase', 
-                letterSpacing: '0.05em',
-                padding: '0 16px',
-                marginBottom: '8px'
-              }}>
-                {group.name}
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                {group.items.map((item) => {
-                  const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
-                  return (
-                    <Link 
-                      key={item.name} 
-                      href={item.href} 
-                      className={isActive ? 'active' : ''}
-                      onClick={closeSidebar}
-                    >
-                      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                        <path d={item.icon} />
-                      </svg>
-                      {item.name}
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </nav>
-        
-        {/* User Section with Role Switcher */}
-        <div className="sidebar-user">
-          <div 
-            className="sidebar-user-info" 
-            style={{ cursor: 'pointer', position: 'relative' }}
-            onClick={() => setShowUserMenu(!showUserMenu)}
-          >
-            <div className="sidebar-avatar">{user?.initials || 'U'}</div>
-            <div style={{ flex: 1 }}>
-              <div className="sidebar-user-name">{user?.name || 'User'}</div>
-              <div className="sidebar-user-role">{user ? getRoleDisplayName(user.role) : 'Loading...'}</div>
-            </div>
-            <svg 
-              width="16" 
-              height="16" 
-              fill="none" 
-              stroke="#64748b" 
-              strokeWidth="2" 
-              viewBox="0 0 24 24"
-              style={{ 
-                transform: showUserMenu ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.2s'
-              }}
-            >
-              <path d="M19 9l-7 7-7-7" />
-            </svg>
-          </div>
-          
-          {/* User Dropdown Menu */}
-          {showUserMenu && (
-            <div style={{
-              position: 'absolute',
-              bottom: '100%',
-              left: 16,
-              right: 16,
-              background: 'white',
-              borderRadius: 8,
-              boxShadow: '0 -4px 20px rgba(0,0,0,0.15)',
-              marginBottom: 8,
-              overflow: 'hidden',
-              zIndex: 100,
-            }}>
-              <div style={{ 
-                padding: '12px 16px', 
-                fontSize: 11, 
-                fontWeight: 600, 
-                color: '#9ca3af', 
-                textTransform: 'uppercase',
-                borderBottom: '1px solid #f3f4f6'
-              }}>
-                Switch User (Demo)
-              </div>
-              {Object.values(demoUsers).map((demoUser) => (
-                <button
-                  key={demoUser.email}
-                  onClick={() => {
-                    switchUser(demoUser.email);
-                    setShowUserMenu(false);
-                  }}
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                    padding: '12px 16px',
-                    background: user?.email === demoUser.email ? '#f0f7ff' : 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                  }}
-                >
-                  <div style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: '50%',
-                    background: user?.email === demoUser.email ? '#0f172a' : '#e5e7eb',
-                    color: user?.email === demoUser.email ? 'white' : '#6b7280',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 12,
-                    fontWeight: 600,
-                  }}>
-                    {demoUser.initials}
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 500, color: '#1a1a1a' }}>
-                      {demoUser.name}
-                    </div>
-                    <div style={{ fontSize: 12, color: '#6b7280' }}>
-                      {getRoleDisplayName(demoUser.role)}
-                    </div>
-                  </div>
-                  {user?.email === demoUser.email && (
-                    <svg 
-                      width="16" 
-                      height="16" 
-                      fill="none" 
-                      stroke="#0f172a" 
-                      strokeWidth="2" 
-                      viewBox="0 0 24 24"
-                      style={{ marginLeft: 'auto' }}
-                    >
-                      <path d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
-          
-          <Link href="/" onClick={closeSidebar} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', marginTop: '8px', color: '#64748b', textDecoration: 'none', fontSize: '14px' }}>
-            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
-            </svg>
-            Sign Out
+            <span className="text-xl font-bold text-white tracking-wide">SIRKL</span>
           </Link>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <main className="main-content" style={{ padding: 0 }}>
-        {/* Frosted Glass Header - Fixed to top */}
-        <header className="frosted-header" style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 30,
-          height: '64px',
-          borderBottom: '1px solid #e2e8f0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 32px',
-          background: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(12px)',
-        }}>
-          <div>
-            <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b', margin: 0 }}>
-              {selectedClient ? selectedClient.name : 'Admin Dashboard'}
-            </h1>
-            <p style={{ fontSize: '14px', color: '#64748b', margin: 0 }}>
-              {selectedClient ? 'Client Workflows' : 'Platform Overview'}
-            </p>
-          </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            {/* Search Bar */}
-            <div className="search-bar" style={{ display: 'none' }}>
-              <svg width="16" height="16" fill="none" stroke="#94a3b8" strokeWidth="2" viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-              </svg>
-              <input type="text" placeholder="Search..." />
-              <kbd>⌘K</kbd>
-            </div>
+        {/* Navigation */}
+        <nav className="p-4 space-y-1">
+          {navigation.map((item) => {
+            const isActive = pathname === item.href || 
+              (item.href !== '/dashboard/bill-negotiator' && pathname.startsWith(item.href));
             
-            {/* Notifications */}
-            <button className="notification-btn" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-              <svg width="20" height="20" fill="none" stroke="#475569" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
-              <span className="notification-dot"></span>
-            </button>
-          </div>
-        </header>
-        
-        {/* Content with Gradient Orb */}
-        <div style={{ position: 'relative', padding: '24px 32px 32px' }}>
-          {/* Gradient Orb Background */}
-          <div style={{ position: 'absolute', top: 0, right: 0, width: '500px', height: '500px', pointerEvents: 'none', zIndex: 0 }}>
-            <div className="dashboard-orb" style={{ width: '100%', height: '100%', borderRadius: '50%' }}></div>
-          </div>
-          
-          {/* Page Content */}
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            {children}
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`
+                  flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
+                  transition-colors duration-150
+                  ${isActive 
+                    ? 'bg-blue-600 text-white' 
+                    : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                  }
+                `}
+              >
+                <item.icon className="w-5 h-5" />
+                {item.name}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Bottom section */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-700">
+          <div className="flex items-center gap-3 px-3 py-2">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+              <span className="text-white text-sm font-medium">S</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-white truncate">Solidarity</p>
+              <p className="text-xs text-slate-400">Bill Negotiator</p>
+            </div>
           </div>
         </div>
-      </main>
+      </aside>
 
-      <style jsx global>{`
-        @media (max-width: 1024px) {
-          .mobile-close-btn {
-            display: block !important;
-          }
-        }
-      `}</style>
+      {/* Main content */}
+      <div className="lg:pl-64">
+        {/* Top bar */}
+        <header className="h-16 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-4 lg:px-8">
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
+          {/* Page title */}
+          <h1 className="text-lg font-semibold text-white hidden lg:block">
+            Bill Negotiator
+          </h1>
+
+          {/* Right side */}
+          <div className="flex items-center gap-4">
+            {/* Notifications */}
+            <button className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 relative">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+            </button>
+
+            {/* User menu */}
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
+                <span className="text-white text-sm font-medium">U</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Page content */}
+        <main className="min-h-[calc(100vh-4rem)]">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }
-// Sidebar cleanup Sat Mar  7 07:26:26 PST 2026

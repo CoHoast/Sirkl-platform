@@ -32,7 +32,7 @@ export default function LoginPage() {
       if (data.mustChangePassword) {
         window.location.href = '/change-password';
       } else {
-        window.location.href = '/dashboard';
+        window.location.href = '/dashboard/bill-negotiator';
       }
     } catch (err) {
       setError('An error occurred. Please try again.');
@@ -46,46 +46,85 @@ export default function LoginPage() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(135deg, #1e3a5f 0%, #0d1b2a 100%)',
+      background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
       padding: '20px'
     }}>
       <div style={{
-        background: 'white',
-        borderRadius: '16px',
+        background: '#1e293b',
+        borderRadius: '24px',
         padding: '48px',
         width: '100%',
         maxWidth: '420px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+        border: '1px solid rgba(255, 255, 255, 0.1)'
       }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          {/* Sirkl Logo - Circle spliced in half */}
           <div style={{
-            width: '64px',
-            height: '64px',
-            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-            borderRadius: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 16px'
+            width: '72px',
+            height: '72px',
+            margin: '0 auto 20px',
+            position: 'relative'
           }}>
-            <span style={{ color: 'white', fontWeight: 'bold', fontSize: '28px' }}>D</span>
+            <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Left half of circle */}
+              <path 
+                d="M36 6C19.4315 6 6 19.4315 6 36C6 52.5685 19.4315 66 36 66" 
+                stroke="url(#gradient1)" 
+                strokeWidth="4" 
+                strokeLinecap="round"
+              />
+              {/* Right half of circle */}
+              <path 
+                d="M36 6C52.5685 6 66 19.4315 66 36C66 52.5685 52.5685 66 36 66" 
+                stroke="url(#gradient2)" 
+                strokeWidth="4" 
+                strokeLinecap="round"
+              />
+              {/* S in the middle formed by negative space */}
+              <path 
+                d="M44 24C44 24 40 20 32 22C24 24 26 32 32 34C38 36 42 38 42 44C42 50 36 52 30 50" 
+                stroke="white" 
+                strokeWidth="3" 
+                strokeLinecap="round"
+                fill="none"
+              />
+              <defs>
+                <linearGradient id="gradient1" x1="6" y1="36" x2="36" y2="36">
+                  <stop stopColor="#06b6d4" />
+                  <stop offset="1" stopColor="#3b82f6" />
+                </linearGradient>
+                <linearGradient id="gradient2" x1="36" y1="36" x2="66" y2="36">
+                  <stop stopColor="#3b82f6" />
+                  <stop offset="1" stopColor="#8b5cf6" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
-          <h1 style={{ fontSize: '24px', fontWeight: '700', color: '#111827', margin: '0 0 8px' }}>
-            DOKit Admin
+          <h1 style={{ 
+            fontSize: '28px', 
+            fontWeight: '700', 
+            color: '#f8fafc', 
+            margin: '0 0 8px',
+            letterSpacing: '0.05em'
+          }}>
+            SIRKL
           </h1>
-          <p style={{ color: '#6b7280', margin: 0 }}>Sign in to your account</p>
+          <p style={{ color: '#94a3b8', margin: 0, fontSize: '14px' }}>
+            Healthcare Intelligence Platform
+          </p>
         </div>
 
         {/* Error Message */}
         {error && (
           <div style={{
-            background: '#fef2f2',
-            border: '1px solid #fecaca',
-            borderRadius: '8px',
+            background: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            color: '#fca5a5',
             padding: '12px 16px',
+            borderRadius: '12px',
             marginBottom: '24px',
-            color: '#dc2626',
             fontSize: '14px'
           }}>
             {error}
@@ -95,42 +134,51 @@ export default function LoginPage() {
         {/* Login Form */}
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '20px' }}>
-            <label style={{
-              display: 'block',
+            <label style={{ 
+              display: 'block', 
+              marginBottom: '8px', 
+              color: '#cbd5e1',
               fontSize: '14px',
-              fontWeight: '500',
-              color: '#374151',
-              marginBottom: '8px'
+              fontWeight: '500'
             }}>
-              Email address
+              Email
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              autoComplete="email"
               style={{
                 width: '100%',
-                padding: '12px 16px',
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
+                padding: '14px 16px',
+                background: '#0f172a',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
                 fontSize: '16px',
+                color: '#f8fafc',
                 outline: 'none',
-                transition: 'border-color 0.2s',
+                transition: 'border-color 0.2s, box-shadow 0.2s',
                 boxSizing: 'border-box'
               }}
-              placeholder="chris@dokit.ai"
+              onFocus={(e) => {
+                e.target.style.borderColor = '#3b82f6';
+                e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.2)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                e.target.style.boxShadow = 'none';
+              }}
+              placeholder="you@company.com"
             />
           </div>
 
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{
-              display: 'block',
+          <div style={{ marginBottom: '28px' }}>
+            <label style={{ 
+              display: 'block', 
+              marginBottom: '8px', 
+              color: '#cbd5e1',
               fontSize: '14px',
-              fontWeight: '500',
-              color: '#374151',
-              marginBottom: '8px'
+              fontWeight: '500'
             }}>
               Password
             </label>
@@ -139,18 +187,27 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              autoComplete="current-password"
               style={{
                 width: '100%',
-                padding: '12px 16px',
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
+                padding: '14px 16px',
+                background: '#0f172a',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
                 fontSize: '16px',
+                color: '#f8fafc',
                 outline: 'none',
-                transition: 'border-color 0.2s',
+                transition: 'border-color 0.2s, box-shadow 0.2s',
                 boxSizing: 'border-box'
               }}
-              placeholder="••••••••••••"
+              onFocus={(e) => {
+                e.target.style.borderColor = '#3b82f6';
+                e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.2)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                e.target.style.boxShadow = 'none';
+              }}
+              placeholder="••••••••"
             />
           </div>
 
@@ -160,29 +217,44 @@ export default function LoginPage() {
             style={{
               width: '100%',
               padding: '14px',
-              background: loading ? '#9ca3af' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-              color: 'white',
+              background: loading 
+                ? '#475569' 
+                : 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
               border: 'none',
-              borderRadius: '8px',
+              borderRadius: '12px',
+              color: 'white',
               fontSize: '16px',
               fontWeight: '600',
               cursor: loading ? 'not-allowed' : 'pointer',
-              transition: 'opacity 0.2s'
+              transition: 'transform 0.2s, box-shadow 0.2s',
+              boxShadow: loading ? 'none' : '0 4px 14px rgba(59, 130, 246, 0.4)'
+            }}
+            onMouseOver={(e) => {
+              if (!loading) {
+                (e.target as HTMLButtonElement).style.transform = 'translateY(-1px)';
+                (e.target as HTMLButtonElement).style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.5)';
+              }
+            }}
+            onMouseOut={(e) => {
+              (e.target as HTMLButtonElement).style.transform = 'translateY(0)';
+              (e.target as HTMLButtonElement).style.boxShadow = '0 4px 14px rgba(59, 130, 246, 0.4)';
             }}
           >
-            {loading ? 'Signing in...' : 'Sign in'}
+            {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
         {/* Footer */}
-        <p style={{
+        <div style={{ 
+          marginTop: '32px', 
           textAlign: 'center',
-          marginTop: '24px',
-          color: '#9ca3af',
-          fontSize: '12px'
+          paddingTop: '24px',
+          borderTop: '1px solid rgba(255, 255, 255, 0.1)'
         }}>
-          Secure admin access • 8-hour sessions
-        </p>
+          <p style={{ color: '#64748b', fontSize: '13px', margin: 0 }}>
+            Powered by <span style={{ color: '#94a3b8', fontWeight: '600' }}>Sirkl</span>
+          </p>
+        </div>
       </div>
     </div>
   );
